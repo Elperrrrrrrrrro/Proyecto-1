@@ -1,6 +1,6 @@
 package boardGameCafe;
-
-public class Bebida extends ProductoMenu{
+import java.io.Serializable;
+public class Bebida extends ProductoMenu implements Serializable{
 private boolean esAlcoholica ;
 private boolean temperatura; 
 

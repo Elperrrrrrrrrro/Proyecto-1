@@ -1,7 +1,8 @@
 package boardGameCafe;
 import java.util.*;
 import java.time.*;
-public class Mesa {
+import java.io.Serializable;
+public class Mesa implements Serializable{
 	private int numeroMesa;
 	private Cliente clienteActual;
 	private ArrayList<ProductoMenu> pedidoActual;

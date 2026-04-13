@@ -3,10 +3,10 @@ package boardGameCafe;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.*;
-
+import java.io.Serializable;
 import java.time.*;
 
-public class SistemaBoardGameCafe {
+public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, JuegoMesa> inventario; // llave id del juego
 	private Map<String, JuegoMesa> inventarioVender; // llave id del juego
 	private Map<String, Empleado> empleados; // llave es el login+password de los empleados
@@ -27,8 +27,21 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public SistemaBoardGameCafe() {
-		
-	}
+		    inventario = new HashMap<>();
+	        inventarioVender = new HashMap<>();
+	        empleados = new HashMap<>();
+	        clientes = new HashMap<>();
+	        mesas = new HashMap<>();
+	        turnos = new HashMap<>();
+	        historialVenta = new HashMap<>();
+	        historialPrestamosClientes = new HashMap<>();
+	        historailPrestamosEmpleados = new HashMap<>();
+	        Sugerencias = new ArrayList<>();
+	    }
+
+	    public void guardar() {
+	        Persistencia.guardarSistema(this);
+	    }
 	
 	public void cargarDatos() {  // carga de datos falta percistencia
 		
@@ -147,7 +160,7 @@ public class SistemaBoardGameCafe {
 		if (!(this.usuarioActual instanceof Administrador)) {
 			throw new SecurityException("Acceso denegado: Solo el Administrador puede agregar juegos al inventario.");
 		}
-		String id = juego.GetIdjuego();
+		String id = juego.getId();
 		this.inventario.put(id, juego);
 	}
 	

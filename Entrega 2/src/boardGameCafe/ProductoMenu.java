@@ -1,6 +1,6 @@
 package boardGameCafe;
-
-public abstract class ProductoMenu {
+import java.io.Serializable;
+public abstract class ProductoMenu implements Serializable {
 	private String nombre;
 	private double precioBase;
 	private String codigoItem ;

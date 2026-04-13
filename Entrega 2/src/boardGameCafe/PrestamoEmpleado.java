@@ -1,8 +1,9 @@
 package boardGameCafe;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.io.Serializable;
 
-public class PrestamoEmpleado extends Prestamo {
+public class PrestamoEmpleado extends Prestamo implements Serializable{
 
     private Empleado empleado;
     private Map<String, Turno> turnos;
