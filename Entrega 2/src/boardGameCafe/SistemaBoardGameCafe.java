@@ -20,6 +20,12 @@ public class SistemaBoardGameCafe {
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
 	private Empleado usuarioActual ;
 	
+	private void verificarSesion() {
+		if (this.usuarioActual == null) {
+			throw new SecurityException("Acceso denegado: Ningún usuario ha iniciado sesión.");
+		}
+	}
+	
 	public SistemaBoardGameCafe() {
 		
 	}
@@ -34,11 +40,12 @@ public class SistemaBoardGameCafe {
 	
 	public boolean inciarSesion(String login, String password) {
 		try {
-			this.empleados.get(login+password);
+			
+			this.usuarioActual = this.empleados.get(login+password);
 			return true;
 		}
 		catch(Exception e) {
-			return false;
+			return false; 	
 		}
 		
 
@@ -51,6 +58,8 @@ public class SistemaBoardGameCafe {
 	
 	public boolean procesarPrestamo(String idJuego, int idMesa, boolean esCliente, Cliente cliente 
 			, Empleado empleado , JuegoMesa juego,  LocalDateTime inicio) {
+		
+		
 		if (esCliente) {
 			String Id = String.valueOf(this.historialPrestamosClientes.size()+1);
 			PrestamoCliente prestamo = new PrestamoCliente(Id,this.inventario.get(idJuego),inicio, null,cliente ); // aca el null esta por que no tiene fecha de entrega aun
@@ -93,11 +102,13 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public void limpiarMesa(LocalDateTime fin, Mesa mesa) {
+		verificarSesion();
 		mesa.liberarMesa();
 		
 	}
 	
 	public void registrarVenta(int idMesa, LocalDateTime fecha, Cliente cliente) {
+		verificarSesion();
 		String Id = String.valueOf(this.historialVenta.size()+1);
 		Venta venta = new Venta( Id,  fecha,  cliente);
 		this.historialVenta.put(Id, venta);
@@ -105,6 +116,7 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public boolean SolicitarCambioTurno(String idEmpleado, String dianuevo) {
+		verificarSesion();
 		String Id = String.valueOf(this.Sugerencias.size()+1);
 		try {
 			Sugerencia sugerencia = new Sugerencia(Id,false,false,dianuevo,this.empleados.get(idEmpleado),null) ;
@@ -117,32 +129,43 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) {
+		if (!(this.usuarioActual instanceof Administrador)) {
+			throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
+		}
+
 		if(sugerencia.isTipoSugerencia()) {
 			this.menu.put(sugerencia.getProductoMenu().getNombre(), sugerencia.getProductoMenu());
-		}else {
-			this.turnos.get(sugerencia.getDiaCambio().adicionarEmpleado());
+		} else {
+			// Nota: Corregí el error de sintaxis que tenías aquí
+			this.turnos.get(sugerencia.getDiaCambio()).adicionarEmpleado(this.empleados.get(idEmpleado)); 
 		}
 		sugerencia.setEstaAprobado(true);
-		
 		return true;
 	}
 	
 	public void agregarJuegoMesa(JuegoMesa juego) {
-		String id= juego.GetIdjuego();
+		if (!(this.usuarioActual instanceof Administrador)) {
+			throw new SecurityException("Acceso denegado: Solo el Administrador puede agregar juegos al inventario.");
+		}
+		String id = juego.GetIdjuego();
 		this.inventario.put(id, juego);
 	}
 	
 	public void cambiarEstadoJuego(String idJuego, String estado) {
+		if (!(this.usuarioActual instanceof Administrador)) {
+			throw new SecurityException("Acceso denegado: Solo el Administrador puede cambiar el estado de los juegos.");
+		}
 		this.inventario.get(idJuego).setEstado(estado);
 	}
 	
 	public void registrarCliente(Cliente cliente) {
+		verificarSesion();
 		this.clientes.put(cliente.getDocumento(), cliente);
 	}
 	
 	public void agregarplatoaMesa(String idMesa, String nombrePlato) {
+		verificarSesion();
 		this.mesas.get(idMesa).agregarAlPedido(this.menu.get(nombrePlato));
 	}
-	
 	
 }
