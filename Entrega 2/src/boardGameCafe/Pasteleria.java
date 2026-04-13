@@ -1,6 +1,7 @@
 package boardGameCafe;
+import java.io.Serializable;
 import java.util.*;
-public class Pasteleria extends ProductoMenu{
+public class Pasteleria extends ProductoMenu implements Serializable{
 	private ArrayList<String> alergenos;
 	public Pasteleria(String nombre, String codigo  , 
 			 double precioBase,String codigoItem,String descripcion, ArrayList<String> alergenos) {

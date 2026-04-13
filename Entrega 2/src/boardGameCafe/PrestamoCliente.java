@@ -1,7 +1,8 @@
 package boardGameCafe;
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class PrestamoCliente extends Prestamo {
+public class PrestamoCliente extends Prestamo implements Serializable{
 
     private Cliente cliente;
     

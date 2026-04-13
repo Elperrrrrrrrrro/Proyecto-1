@@ -1,7 +1,8 @@
 package boardGameCafe;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-public class Cliente {
+public class Cliente implements Serializable {
     private String nombre;
     private String documento;
     private int puntosFidelidad;

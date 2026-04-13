@@ -1,6 +1,6 @@
 package boardGameCafe;
-
-public class Administrador {
+import java.io.Serializable;
+public class Administrador implements Serializable {
 	private String nombre;
 	private String documentoIdentidad;
 	private String login;

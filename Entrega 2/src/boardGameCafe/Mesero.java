@@ -1,8 +1,8 @@
 package boardGameCafe;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class Mesero extends Empleado {
+public class Mesero extends Empleado implements Serializable {
 	private List<JuegoMesa> juegosConocidos;
 	
 	public Mesero(String nombre, String documentoIdentidad, int edad, String login, String password, List<JuegoMesa> juegosConocidos) {

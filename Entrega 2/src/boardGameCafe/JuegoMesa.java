@@ -1,6 +1,7 @@
 package boardGameCafe;
-
-public class JuegoMesa {
+import java.io.Serializable;
+public class JuegoMesa implements Serializable{
+  
 	private String id;
 	private String nombre;
 	private int anoPublicacion;
