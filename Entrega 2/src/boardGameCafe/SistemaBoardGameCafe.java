@@ -149,7 +149,6 @@ public class SistemaBoardGameCafe implements Serializable {
 		if(sugerencia.isTipoSugerencia()) {
 			this.menu.put(sugerencia.getProductoMenu().getNombre(), sugerencia.getProductoMenu());
 		} else {
-			// Nota: Corregí el error de sintaxis que tenías aquí
 			this.turnos.get(sugerencia.getDiaCambio()).adicionarEmpleado(this.empleados.get(idEmpleado)); 
 		}
 		sugerencia.setEstaAprobado(true);
