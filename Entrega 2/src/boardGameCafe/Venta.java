@@ -32,7 +32,7 @@ public class Venta {
         this.itemsVendidos.add(producto);
     }
 
-    public void agregarJuegoComprado(juegoMesa juego) {
+    public void agregarJuegoComprado(JuegoMesa juego) {
         this.juegosVendidos.add(juego);
     }
     
@@ -52,7 +52,7 @@ public class Venta {
     public double calcularIva() {
         double sumaJuegos = 0.0;
         
-        for (juegoMesa juego : juegosVendidos) {
+        for (JuegoMesa juego : juegosVendidos) {
 
             sumaJuegos += juego.getPrecioVenta(); 
         }

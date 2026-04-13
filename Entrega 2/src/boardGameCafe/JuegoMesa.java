@@ -12,9 +12,10 @@ public class JuegoMesa {
 	private boolean SoloAdultos;
 	private String estado;
 	private boolean dificil;
+	private double precioVenta;
 	
 	
-	public JuegoMesa (String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil) {
+	public JuegoMesa (String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil, double precioVenta) {
 		this.nombre = nombre;
 		this.anoPublicacion = anoPublicacion;
 		this.empresa = empresa;
@@ -24,6 +25,7 @@ public class JuegoMesa {
 		this.SoloAdultos = SoloAdultos;
 		this.dificil = dificil;
 		this.estado = estado;
+		this.precioVenta = precioVenta;
 		this.vecesPrestado = 0;
 		this.prestado = false;	
 	}
@@ -138,7 +140,13 @@ public class JuegoMesa {
 		this.dificil = dificil;
 	}
 	
+	public double getPrecioVenta() {
+		return precioVenta;
+	}
 	
+	public void setPrecioVenta(double precioVenta) {
+		this.precioVenta = precioVenta;
+	}
 	
 	
 }

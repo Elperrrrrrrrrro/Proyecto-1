@@ -1,12 +1,15 @@
 package boardGameCafe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Empleado {
     private String nombre;
     private String documentoIdentidad;
     private int edad;
     private String login;
     private String password;
-    private List<juegoMesa> juegosConocidos;
+    private List<JuegoMesa> juegosConocidos;
 
     public Empleado(String nombre, String documentoIdentidad, int edad, String login, String password) {
         this.nombre = nombre;
@@ -36,13 +39,14 @@ public class Empleado {
     public String getPassword() {
         return password;
     }
-    public void adicionarJuegoConocido(juegoMesa juego) {
+    public void adicionarJuegoConocido(JuegoMesa juego) {
         if (!juegosConocidos.contains(juego)) {
             juegosConocidos.add(juego);
         }
+    }
     
-  public List<juegoMesa> getJuegosConocidos() {
+  public List<JuegoMesa> getJuegosConocidos() {
             return juegosConocidos;
-
+  }
 
 }
