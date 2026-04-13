@@ -64,6 +64,7 @@ public class Mesa {
 		
 		for (Prestamo prestamo: this.prestamosActivos) {
 			prestamo.getJuego().setPrestado(false);
+			prestamo.setFechaDevolucion(LocalDateTime.now());
 		}
 		
 		this.prestamosActivos = new ArrayList<>();

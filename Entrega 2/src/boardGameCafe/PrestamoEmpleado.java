@@ -17,7 +17,7 @@ public class PrestamoEmpleado extends Prestamo {
     @Override
     public boolean sonAptos(Mesa mesa) {
         // 1. ver si el juego esta disponible
-        if (juego.getEstado()) {
+        if (juego.isPrestado()) {
             return false;
         }
         // ver que no este en turno

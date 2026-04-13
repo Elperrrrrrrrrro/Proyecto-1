@@ -34,4 +34,8 @@ public abstract class Prestamo {
     public LocalDateTime getFechaDevolucion() {
         return fechaDevolucion;
     }
+    
+    public void setFechaDevolucion(LocalDateTime fechaDevolucion) {
+		this.fechaDevolucion = fechaDevolucion;
+	}
 }
