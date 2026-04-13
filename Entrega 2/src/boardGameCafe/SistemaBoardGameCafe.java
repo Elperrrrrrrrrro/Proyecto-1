@@ -180,5 +180,15 @@ public class SistemaBoardGameCafe implements Serializable {
 		verificarSesion();
 		this.mesas.get(idMesa).agregarAlPedido(this.menu.get(nombrePlato));
 	}
-	
+	public Map<String, Cliente> getClientes() {
+	    return clientes;
+	}
+
+	public Map<String, JuegoMesa> getInventario() {
+	    return inventario;
+	}
+
+	public Map<String, Mesa> getMesas() {
+	    return mesas;
+	}
 }
