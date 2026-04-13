@@ -7,13 +7,14 @@ import java.util.*;
 import java.time.*;
 
 public class SistemaBoardGameCafe {
-	private Map<String, juegoMesa> inventario; // llave id del juego
+	private Map<String, JuegoMesa> inventario; // llave id del juego
+	private Map<String, JuegoMesa> inventarioVender; // llave id del juego
 	private Map<String, Empleado> empleados; // llave es el login+password de los empleados
 	private Map<String, Cliente> clientes; // llave documento clientes
 	private Map<String, Mesa> mesas; //llave numero mesa 
 	private Map<String, Turno> turnos; // llave dia de la semana 
 	private Map<String, Venta>  historialVenta ; // la llave es el ID venta
-	private Map<String, PrestamoCliente> historailPrestamosClientes;
+	private Map<String, PrestamoCliente> historialPrestamosClientes;
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;
 	private ArrayList<String> Sugerencias;
 	private Empleado usuarioActual ;
@@ -48,15 +49,16 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public boolean procesarPrestamo(String idJuego, int idMesa, boolean esCliente, Cliente cliente 
-			, Empleado empleado , juegoMesa juego,  LocalDateTime inicio) {
+			, Empleado empleado , JuegoMesa juego,  LocalDateTime inicio) {
 		if (esCliente) {
 
 			PrestamoCliente prestamo = new PrestamoCliente(this.inventario.get(idJuego),inicio, null,cliente  ); // aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoCliente.sonAptos(this.mesas.get(idMesa)) &&  !this.inventario.get(idJuego).getEstado()) {
+				if(PrestamoCliente.sonAptos(this.mesas.get(idMesa)) &&  (!this.inventario.get(idJuego).isPrestado())) {
 					this.mesas.get(idMesa).AgregarPrestamo(prestamo);
-					this.inventario.get(idJuego).cambiarEstado(true);
-					this.historailPrestamosClientes.put(idJuego, prestamo);
+					this.inventario.get(idJuego).setPrestado(true);
+					this.historialPrestamosClientes.put(idJuego, prestamo);
+					this.inventario.get(idJuego).sumarVecesPrestado();
 					
 					return true;
 				}else {
@@ -70,9 +72,10 @@ public class SistemaBoardGameCafe {
 		}else {
 			PrestamoEmpleado prestano = new PrestamoEmpleado(this.inventario.get(idJuego),inicio,null,empleado);// aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoEmpleado.sonAptos(null) &&  !this.inventario.get(idJuego).getEstado() ){
+				if(PrestamoEmpleado.sonAptos(null) &&  !this.inventario.get(idJuego).isPrestado() ){
 					this.historailPrestamosEmpleados.put(idJuego, prestano);
-					this.inventario.get(idJuego).cambiarEstado(true);
+					this.inventario.get(idJuego).setPrestado(true);
+					this.inventario.get(idJuego).sumarVecesPrestado();
 					return true;
 				} else {
 					return false;
@@ -87,15 +90,12 @@ public class SistemaBoardGameCafe {
 	}
 	
 	public void limpiarMesa(LocalDateTime fin, Mesa mesa) {
-		ArrayList<String> codigos = mesa.liberarMesa();
-		for(String i: codigos) {
-			this.historailPrestamosClientes.get(i).cambiarEstado(false);
-		}
+		mesa.liberarMesa();
 		
 	}
 	
-	public Venta registrarVenta(int idMesa) {
-		Venta venta = new Venta()
+	public void registrarVenta(int idMesa) {
+		Venta venta = new Venta();
 	}
 	
 }

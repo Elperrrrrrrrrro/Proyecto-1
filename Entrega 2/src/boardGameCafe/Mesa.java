@@ -5,7 +5,7 @@ public class Mesa {
 	private int numeroMesa;
 	private Cliente clienteActual;
 	private ArrayList<ProductoMenu> pedidoActual;
-	private ArrayList<Prestamo >prestamoActicos;
+	private ArrayList<Prestamo>prestamosActivos;
 	private int cantidadPersonas;
 	private boolean hayMenores;
 	private ArrayList<String> alergenos;
@@ -17,7 +17,7 @@ public class Mesa {
 		this.hayMenores = menores; 
 		this.alergenos = alergenos;
 		this.pedidoActual = new ArrayList<>();
-		this.prestamoActicos = new ArrayList<>();
+		this.prestamosActivos = new ArrayList<>();
 		this.clienteActual = null;
 		this.hayInfantes = hayInfantes;
 
@@ -33,7 +33,7 @@ public class Mesa {
 		return pedidoActual;
 	}
 	public ArrayList<Prestamo> getPrestamoActicos() {
-		return prestamoActicos;
+		return prestamosActivos;
 	}
 	public int getCantidadPersonas() {
 		return cantidadPersonas;
@@ -56,20 +56,20 @@ public class Mesa {
 	}
 	
 	
-	public ArrayList<String> liberarMesa() {
+	public void liberarMesa() {
 		
 		this.cantidadPersonas=0;
 		this.clienteActual= null;
 		this.pedidoActual = new ArrayList<>();
-		this.prestamoActicos = new ArrayList<>();
+		
+		for (Prestamo prestamo: this.prestamosActivos) {
+			prestamo.getJuego().setPrestado(false);
+		}
+		
+		this.prestamosActivos = new ArrayList<>();
 		this.hayInfantes= false;
 		this.hayMenores= false;
-		ArrayList<String> codigosJuegos = new ArrayList<>();
 
-
-		return codigosJuegos;
-		
-		
 	}
 	
 	public ArrayList<ProductoMenu> getPedidoActual() {
@@ -92,7 +92,7 @@ public class Mesa {
 	}
 	
 	public void AgregarPrestamo(Prestamo prestamo) {
-		this.prestamoActicos.add(prestamo);
+		this.prestamosActivos.add(prestamo);
 	}
 	
 
