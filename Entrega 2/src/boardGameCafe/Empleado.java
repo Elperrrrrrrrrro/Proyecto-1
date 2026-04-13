@@ -1,9 +1,9 @@
 package boardGameCafe;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Empleado {
+public class Empleado implements Serializable{
     private String nombre;
     private String documentoIdentidad;
     private int edad;

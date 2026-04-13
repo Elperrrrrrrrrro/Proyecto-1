@@ -1,5 +1,6 @@
 package boardGameCafe;
+import java.io.Serializable;
 
-public class Mesero {
+public class Mesero implements Serializable {
 
 }

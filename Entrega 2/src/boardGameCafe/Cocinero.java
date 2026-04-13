@@ -1,5 +1,5 @@
 package boardGameCafe;
-
-public class Cocinero {
+import java.io.Serializable;
+public class Cocinero implements Serializable{
 
 }

@@ -1,7 +1,8 @@
 package boardGameCafe;
 import java.util.*;
 import java.time.*;
-public class Venta {
+import java.io.Serializable;
+public class Venta implements Serializable {
 	private String idVenta;
 	private LocalDateTime fecha;
 	private Cliente cliente;

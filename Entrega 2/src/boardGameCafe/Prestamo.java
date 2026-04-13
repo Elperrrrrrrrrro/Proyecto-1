@@ -1,8 +1,8 @@
 package boardGameCafe;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public abstract class Prestamo {
+public abstract class Prestamo implements Serializable {
 
     protected String idPrestamo;
     protected JuegoMesa juego;
