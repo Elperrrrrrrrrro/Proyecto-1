@@ -141,7 +141,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	}
 	
 	public void agregarJuegoMesa(JuegoMesa juego) {
-		String id= juego.GetIdjuego();
+		String id= juego.getId();
 		this.inventario.put(id, juego);
 	}
 	
