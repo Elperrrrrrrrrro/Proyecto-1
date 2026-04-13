@@ -14,9 +14,10 @@ public class SistemaBoardGameCafe {
 	private Map<String, Mesa> mesas; //llave numero mesa 
 	private Map<String, Turno> turnos; // llave dia de la semana 
 	private Map<String, Venta>  historialVenta ; // la llave es el ID venta
-	private Map<String, PrestamoCliente> historialPrestamosClientes;
-	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;
-	private ArrayList<String> Sugerencias;
+	private Map<String, PrestamoCliente> historialPrestamosClientes;// llave id prestamo
+	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
+	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
+	private Map<String, ProductoMenu> menu; // llave nombre del plato
 	private Empleado usuarioActual ;
 	
 	public SistemaBoardGameCafe() {
@@ -99,6 +100,49 @@ public class SistemaBoardGameCafe {
 	public void registrarVenta(int idMesa, LocalDateTime fecha, Cliente cliente) {
 		String Id = String.valueOf(this.historialVenta.size()+1);
 		Venta venta = new Venta( Id,  fecha,  cliente);
+		this.historialVenta.put(Id, venta);
+		
 	}
+	
+	public boolean SolicitarCambioTurno(String idEmpleado, String dianuevo) {
+		String Id = String.valueOf(this.Sugerencias.size()+1);
+		try {
+			Sugerencia sugerencia = new Sugerencia(Id,false,false,dianuevo,this.empleados.get(idEmpleado),null) ;
+			this.Sugerencias.put(Id, sugerencia);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+		
+	}
+	
+	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) {
+		if(sugerencia.isTipoSugerencia()) {
+			this.menu.put(sugerencia.getProductoMenu().getNombre(), sugerencia.getProductoMenu());
+		}else {
+			this.turnos.get(sugerencia.getDiaCambio().adicionarEmpleado());
+		}
+		sugerencia.setEstaAprobado(true);
+		
+		return true;
+	}
+	
+	public void agregarJuegoMesa(JuegoMesa juego) {
+		String id= juego.GetIdjuego();
+		this.inventario.put(id, juego);
+	}
+	
+	public void cambiarEstadoJuego(String idJuego, String estado) {
+		this.inventario.get(idJuego).setEstado(estado);
+	}
+	
+	public void registrarCliente(Cliente cliente) {
+		this.clientes.put(cliente.getDocumento(), cliente);
+	}
+	
+	public void agregarplatoaMesa(String idMesa, String nombrePlato) {
+		this.mesas.get(idMesa).agregarAlPedido(this.menu.get(nombrePlato));
+	}
+	
 	
 }
