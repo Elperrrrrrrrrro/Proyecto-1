@@ -14,14 +14,14 @@ public Bebida(String nombre, String codigo  , boolean alcoholica, boolean temper
 
 
 public boolean esApto(Mesa mesa) {
-		if (mesa.isHayMenores()) {
+		if (mesa.isHayMenores() && this.esAlcoholica) {
 			return false;
 		}
 		// aca falta implementar el get juego de producto y el get categoria de juego mesa 
 		// por eso marca error
 		if (this.temperatura) {
 			for (Prestamo i : mesa.getPrestamoActicos()) {
-				if ( "Accion".equals(i.getJuego().getCategoria()){
+				if ( "Accion".equals(i.getJuego().getCategoria())){
 					return false;
 				}
 				

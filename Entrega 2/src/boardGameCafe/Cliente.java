@@ -7,7 +7,7 @@ public class Cliente {
     private int puntosFidelidad;
     private String login;
     private String password;
-    private List<juegoMesa> juegosFavoritos;
+    private List<JuegoMesa> juegosFavoritos;
 
     public Cliente(String nombre, String documento, String login, String password) {
         this.nombre = nombre;
@@ -22,7 +22,7 @@ public class Cliente {
         this.puntosFidelidad += (int) cantidad;
     }
 
-    public void adicionarJuegoFavorito(juegoMesa juego) {
+    public void adicionarJuegoFavorito(JuegoMesa juego) {
         if (!juegosFavoritos.contains(juego)) {
             juegosFavoritos.add(juego);
         }
@@ -41,7 +41,7 @@ public class Cliente {
     public String getLogin() { 
     	return login;
     	}
-    public List<juegoMesa> getJuegosFavoritos() {
+    public List<JuegoMesa> getJuegosFavoritos() {
         return juegosFavoritos;
     }
 }

@@ -7,7 +7,7 @@ public class PrestamoEmpleado extends Prestamo {
     private Empleado empleado;
     private Map<String, Turno> turnos;
 
-    public PrestamoEmpleado(String idPrestamo, juegoMesa juego, LocalDateTime inicio, LocalDateTime entrega,
+    public PrestamoEmpleado(String idPrestamo, JuegoMesa juego, LocalDateTime inicio, LocalDateTime entrega,
                             Empleado empleado, Map<String, Turno> turnos) {
         super(idPrestamo,juego, inicio, entrega);
         this.empleado = empleado;

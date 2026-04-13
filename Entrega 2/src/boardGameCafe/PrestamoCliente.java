@@ -6,7 +6,7 @@ public class PrestamoCliente extends Prestamo {
     private Cliente cliente;
     
     //cambiar el constuctor en lase controladora
-    public PrestamoCliente(String idPrestamo,juegoMesa juego, LocalDateTime inicio, LocalDateTime entrega, Cliente cliente) {
+    public PrestamoCliente(String idPrestamo,JuegoMesa juego, LocalDateTime inicio, LocalDateTime entrega, Cliente cliente) {
         super(idPrestamo,juego, inicio, entrega);
         this.cliente = cliente;
     }
