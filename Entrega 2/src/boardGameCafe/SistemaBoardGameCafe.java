@@ -18,7 +18,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
 	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
-	private Empleado usuarioActual ;
+	private Usuario usuarioActual ;
 	
 	private void verificarSesion() {
 		if (this.usuarioActual == null) {
@@ -36,7 +36,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	        historialVenta = new HashMap<>();
 	        historialPrestamosClientes = new HashMap<>();
 	        historailPrestamosEmpleados = new HashMap<>();
-	        Sugerencias = new ArrayList<>();
+	        Sugerencias = new HashMap<>();
 	    }
 
 	    public void guardar() {

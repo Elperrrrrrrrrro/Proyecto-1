@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Empleado implements Serializable{
+public class Empleado implements Usuario, Serializable{
     private String nombre;
     private String documentoIdentidad;
     private int edad;
