@@ -1,6 +1,8 @@
 package boardGameCafe;
 import java.io.Serializable;
 public class JuegoMesa implements Serializable{
+  
+	private String id;
 	private String nombre;
 	private int anoPublicacion;
 	private String empresa;
@@ -15,7 +17,8 @@ public class JuegoMesa implements Serializable{
 	private double precioVenta;
 	
 	
-	public JuegoMesa (String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil, double precioVenta) {
+	public JuegoMesa (String id, String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil, double precioVenta) {
+		this.id = id;
 		this.nombre = nombre;
 		this.anoPublicacion = anoPublicacion;
 		this.empresa = empresa;
@@ -29,7 +32,10 @@ public class JuegoMesa implements Serializable{
 		this.vecesPrestado = 0;
 		this.prestado = false;	
 	}
-
+	
+	public String getId() {
+		return id;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -84,7 +90,10 @@ public class JuegoMesa implements Serializable{
 	public boolean isDificil() {
 		return dificil;
 	}
-
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -117,7 +126,7 @@ public class JuegoMesa implements Serializable{
 
 
 	public void sumarVecesPrestado() {
-		this.vecesPrestado += 1;
+		this.vecesPrestado++;
 	}
 
 

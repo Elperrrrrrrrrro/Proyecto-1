@@ -14,9 +14,10 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, Mesa> mesas; //llave numero mesa 
 	private Map<String, Turno> turnos; // llave dia de la semana 
 	private Map<String, Venta>  historialVenta ; // la llave es el ID venta
-	private Map<String, PrestamoCliente> historialPrestamosClientes;
-	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;
-	private ArrayList<String> Sugerencias;
+	private Map<String, PrestamoCliente> historialPrestamosClientes;// llave id prestamo
+	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
+	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
+	private Map<String, ProductoMenu> menu; // llave nombre del plato
 	private Empleado usuarioActual ;
 	
 	public SistemaBoardGameCafe() {
@@ -64,10 +65,11 @@ public class SistemaBoardGameCafe implements Serializable {
 	public boolean procesarPrestamo(String idJuego, int idMesa, boolean esCliente, Cliente cliente 
 			, Empleado empleado , JuegoMesa juego,  LocalDateTime inicio) {
 		if (esCliente) {
-
-			PrestamoCliente prestamo = new PrestamoCliente(this.inventario.get(idJuego),inicio, null,cliente  ); // aca el null esta por que no tiene fecha de entrega aun
+			String Id = String.valueOf(this.historialPrestamosClientes.size()+1);
+			PrestamoCliente prestamo = new PrestamoCliente(Id,this.inventario.get(idJuego),inicio, null,cliente ); // aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoCliente.sonAptos(this.mesas.get(idMesa)) &&  (!this.inventario.get(idJuego).isPrestado())) {
+				
+				if(prestamo.sonAptos(this.mesas.get(idMesa)) &&  (!this.inventario.get(idJuego).isPrestado())) {
 					this.mesas.get(idMesa).AgregarPrestamo(prestamo);
 					this.inventario.get(idJuego).setPrestado(true);
 					this.historialPrestamosClientes.put(idJuego, prestamo);
@@ -83,9 +85,10 @@ public class SistemaBoardGameCafe implements Serializable {
 			}
 			
 		}else {
-			PrestamoEmpleado prestano = new PrestamoEmpleado(this.inventario.get(idJuego),inicio,null,empleado);// aca el null esta por que no tiene fecha de entrega aun
+			String Id = String.valueOf(this.historailPrestamosEmpleados.size()+1);
+			PrestamoEmpleado prestano = new PrestamoEmpleado(Id,this.inventario.get(idJuego),inicio,null,empleado, this.turnos);// aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoEmpleado.sonAptos(null) &&  !this.inventario.get(idJuego).isPrestado() ){
+				if(prestano.sonAptos(null) &&  !this.inventario.get(idJuego).isPrestado() ){
 					this.historailPrestamosEmpleados.put(idJuego, prestano);
 					this.inventario.get(idJuego).setPrestado(true);
 					this.inventario.get(idJuego).sumarVecesPrestado();
@@ -97,7 +100,7 @@ public class SistemaBoardGameCafe implements Serializable {
 				return false;
 			}
 		}
-		return true;
+
 		
 	
 	}
@@ -107,8 +110,52 @@ public class SistemaBoardGameCafe implements Serializable {
 		
 	}
 	
-	public void registrarVenta(int idMesa) {
-		Venta venta = new Venta();
+	public void registrarVenta(int idMesa, LocalDateTime fecha, Cliente cliente) {
+		String Id = String.valueOf(this.historialVenta.size()+1);
+		Venta venta = new Venta( Id,  fecha,  cliente);
+		this.historialVenta.put(Id, venta);
+		
 	}
+	
+	public boolean SolicitarCambioTurno(String idEmpleado, String dianuevo) {
+		String Id = String.valueOf(this.Sugerencias.size()+1);
+		try {
+			Sugerencia sugerencia = new Sugerencia(Id,false,false,dianuevo,this.empleados.get(idEmpleado),null) ;
+			this.Sugerencias.put(Id, sugerencia);
+			return true;
+		}catch(Exception e) {
+			return false;
+		}
+		
+	}
+	
+	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) {
+		if(sugerencia.isTipoSugerencia()) {
+			this.menu.put(sugerencia.getProductoMenu().getNombre(), sugerencia.getProductoMenu());
+		}else {
+			this.turnos.get(sugerencia.getDiaCambio().adicionarEmpleado());
+		}
+		sugerencia.setEstaAprobado(true);
+		
+		return true;
+	}
+	
+	public void agregarJuegoMesa(JuegoMesa juego) {
+		String id= juego.GetIdjuego();
+		this.inventario.put(id, juego);
+	}
+	
+	public void cambiarEstadoJuego(String idJuego, String estado) {
+		this.inventario.get(idJuego).setEstado(estado);
+	}
+	
+	public void registrarCliente(Cliente cliente) {
+		this.clientes.put(cliente.getDocumento(), cliente);
+	}
+	
+	public void agregarplatoaMesa(String idMesa, String nombrePlato) {
+		this.mesas.get(idMesa).agregarAlPedido(this.menu.get(nombrePlato));
+	}
+	
 	
 }
