@@ -117,7 +117,7 @@ public class JuegoMesa {
 
 
 	public void sumarVecesPrestado() {
-		this.vecesPrestado += 1;
+		this.vecesPrestado++;
 	}
 
 
