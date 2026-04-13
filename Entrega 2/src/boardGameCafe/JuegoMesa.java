@@ -1,6 +1,7 @@
 package boardGameCafe;
 
 public class JuegoMesa {
+	private String id;
 	private String nombre;
 	private int anoPublicacion;
 	private String empresa;
@@ -15,7 +16,8 @@ public class JuegoMesa {
 	private double precioVenta;
 	
 	
-	public JuegoMesa (String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil, double precioVenta) {
+	public JuegoMesa (String id, String nombre, int anoPublicacion, String empresa, int minJugadores, int maxJugadores, String categoria, boolean SoloAdultos, String estado, boolean dificil, double precioVenta) {
+		this.id = id;
 		this.nombre = nombre;
 		this.anoPublicacion = anoPublicacion;
 		this.empresa = empresa;
@@ -29,7 +31,10 @@ public class JuegoMesa {
 		this.vecesPrestado = 0;
 		this.prestado = false;	
 	}
-
+	
+	public String getId() {
+		return id;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -84,7 +89,10 @@ public class JuegoMesa {
 	public boolean isDificil() {
 		return dificil;
 	}
-
+	
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
