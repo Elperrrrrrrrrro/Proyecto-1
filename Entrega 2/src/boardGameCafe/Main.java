@@ -1,3 +1,4 @@
+package boardGameCafe;
 
 public class Main {
 
