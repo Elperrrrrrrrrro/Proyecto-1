@@ -6,7 +6,7 @@ public class Venta {
 	private LocalDateTime fecha;
 	private Cliente cliente;
 	private ArrayList<ProductoMenu> itemsVendidos ;
-	private ArrayList<juegoMesa> juegosVendidos;
+	private ArrayList<JuegoMesa> juegosVendidos;
 	
 	
 	
