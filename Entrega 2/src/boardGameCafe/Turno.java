@@ -19,6 +19,10 @@ public class Turno {
 	public String getDiaSemana() {
 		return diaSemana;
 	}
+	
+	public void adicionarEmpleado(Empleado e) {
+		empleadosAsignados.add(e);
+	}
 
 	public boolean validarMinimoOperativo() {
 		if (empleadosAsignados.size() < 3) {
