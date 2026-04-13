@@ -51,10 +51,11 @@ public class SistemaBoardGameCafe {
 	public boolean procesarPrestamo(String idJuego, int idMesa, boolean esCliente, Cliente cliente 
 			, Empleado empleado , JuegoMesa juego,  LocalDateTime inicio) {
 		if (esCliente) {
-
-			PrestamoCliente prestamo = new PrestamoCliente(this.inventario.get(idJuego),inicio, null,cliente  ); // aca el null esta por que no tiene fecha de entrega aun
+			String Id = String.valueOf(this.historialPrestamosClientes.size()+1);
+			PrestamoCliente prestamo = new PrestamoCliente(Id,this.inventario.get(idJuego),inicio, null,cliente ); // aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoCliente.sonAptos(this.mesas.get(idMesa)) &&  (!this.inventario.get(idJuego).isPrestado())) {
+				
+				if(prestamo.sonAptos(this.mesas.get(idMesa)) &&  (!this.inventario.get(idJuego).isPrestado())) {
 					this.mesas.get(idMesa).AgregarPrestamo(prestamo);
 					this.inventario.get(idJuego).setPrestado(true);
 					this.historialPrestamosClientes.put(idJuego, prestamo);
@@ -70,9 +71,10 @@ public class SistemaBoardGameCafe {
 			}
 			
 		}else {
-			PrestamoEmpleado prestano = new PrestamoEmpleado(this.inventario.get(idJuego),inicio,null,empleado);// aca el null esta por que no tiene fecha de entrega aun
+			String Id = String.valueOf(this.historailPrestamosEmpleados.size()+1);
+			PrestamoEmpleado prestano = new PrestamoEmpleado(Id,this.inventario.get(idJuego),inicio,null,empleado, this.turnos);// aca el null esta por que no tiene fecha de entrega aun
 			try {
-				if(PrestamoEmpleado.sonAptos(null) &&  !this.inventario.get(idJuego).isPrestado() ){
+				if(prestano.sonAptos(null) &&  !this.inventario.get(idJuego).isPrestado() ){
 					this.historailPrestamosEmpleados.put(idJuego, prestano);
 					this.inventario.get(idJuego).setPrestado(true);
 					this.inventario.get(idJuego).sumarVecesPrestado();
@@ -84,7 +86,7 @@ public class SistemaBoardGameCafe {
 				return false;
 			}
 		}
-		return true;
+
 		
 	
 	}
@@ -94,8 +96,9 @@ public class SistemaBoardGameCafe {
 		
 	}
 	
-	public void registrarVenta(int idMesa) {
-		Venta venta = new Venta();
+	public void registrarVenta(int idMesa, LocalDateTime fecha, Cliente cliente) {
+		String Id = String.valueOf(this.historialVenta.size()+1);
+		Venta venta = new Venta( Id,  fecha,  cliente);
 	}
 	
 }

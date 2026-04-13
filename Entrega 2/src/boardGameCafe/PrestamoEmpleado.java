@@ -14,7 +14,7 @@ public class PrestamoEmpleado extends Prestamo {
         this.turnos = turnos;
     }
 
-    @Override
+
     public boolean sonAptos(Mesa mesa) {
         // 1. ver si el juego esta disponible
         if (juego.isPrestado()) {
