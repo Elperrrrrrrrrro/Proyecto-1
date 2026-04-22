@@ -125,6 +125,8 @@ public class SistemaBoardGameCafe implements Serializable {
 		String Id = String.valueOf(this.historialVenta.size()+1);
 		Venta venta = new Venta( Id,  fecha,  cliente);
 		this.historialVenta.put(Id, venta);
+		// puntos de fideluidad faltan , para hacer descuento , y que se adicionen a eñ cñiente 
+		// cantidad % propina que elijia el cliente 
 		
 	}
 	
@@ -190,4 +192,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	public Map<String, Mesa> getMesas() {
 	    return mesas;
 	}
+
+	// ver turnos siendo empleado 
+
+	
 }
