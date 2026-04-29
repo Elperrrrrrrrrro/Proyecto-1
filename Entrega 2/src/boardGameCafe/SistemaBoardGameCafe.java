@@ -18,6 +18,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
 	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
+	// implementar cola de mesas para asignar mesas a los clientes de forma ordenada TODO
+	// hacer una cola de sugerencias para que el administrador las revise en orden, y en la revision es cuando se agrega al historial TODO
 	private Usuario usuarioActual ;
 	
 	private void verificarSesion() {
@@ -124,9 +126,11 @@ public class SistemaBoardGameCafe implements Serializable {
 		verificarSesion();
 		String Id = String.valueOf(this.historialVenta.size()+1);
 		Venta venta = new Venta( Id,  fecha,  cliente);
+		//Falta implementacino TODO
 		this.historialVenta.put(Id, venta);
 		// puntos de fideluidad faltan , para hacer descuento , y que se adicionen a eñ cñiente 
 		// cantidad % propina que elijia el cliente 
+		// implementar compra por parte de los empleados TODO
 		
 	}
 	
@@ -140,10 +144,10 @@ public class SistemaBoardGameCafe implements Serializable {
 		}catch(Exception e) {
 			return false;
 		}
-		
+		// Falta implementar intercambio con otro empleado TODO
 	}
 	
-	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) {
+	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) { //Tambien se usa para aprobar sugerencias de comida TODO
 		if (!(this.usuarioActual instanceof Administrador)) {
 			throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
 		}
@@ -193,7 +197,17 @@ public class SistemaBoardGameCafe implements Serializable {
 	    return mesas;
 	}
 
-	// ver turnos siendo empleado 
-
+	// ver turnos siendo empleado TODO
 	
+	// Sugerencias empleados TODO
+	
+	// Implementar cambiar de invenatario de prestamo a de venta juego TODO
+	
+	// Implementar que el administrador pueda modificar cambios de turno sin sugerencia TODO
+	
+	/* Implementar que el administrador pueda tener un informe: 'Debe tener acceso a un informe detallado
+	de todas las ventas, separadas por los diferentes rubros (juegos y comida), fechas en diferentes granularidades
+	(diaria, semanal y mensual), así como la posibilidad de ver estos valores de ventas segregados por costo,
+	impuestos y propinas.'
+	*/
 }

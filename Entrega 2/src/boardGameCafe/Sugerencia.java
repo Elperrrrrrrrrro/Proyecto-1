@@ -20,6 +20,7 @@ public class Sugerencia {
         this.empleado = empleado;
         this.productoMenu = productoMenu;
     }
+    // Arreglar constructor para el tipo de sugerenacia TODO
 
     // --- MÉTODOS GET (Para todos los atributos) ---
     
