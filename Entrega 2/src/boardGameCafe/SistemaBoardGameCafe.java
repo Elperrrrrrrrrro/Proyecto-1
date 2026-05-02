@@ -1,10 +1,9 @@
 package boardGameCafe;
 
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.*;
 import java.io.Serializable;
 import java.time.*;
+
 
 public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, JuegoMesa> inventario; // llave id del juego
@@ -19,6 +18,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
 	// implementar cola de mesas para asignar mesas a los clientes de forma ordenada TODO
+	private Stack<Mesa> mesasDesocupadas;
 	// hacer una cola de sugerencias para que el administrador las revise en orden, y en la revision es cuando se agrega al historial TODO
 	private Usuario usuarioActual ;
 	
@@ -39,6 +39,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	        historialPrestamosClientes = new HashMap<>();
 	        historailPrestamosEmpleados = new HashMap<>();
 	        Sugerencias = new HashMap<>();
+			mesasDesocupadas = new Stack<>();
+	        menu = new HashMap<>();
 	    }
 
 	    public void guardar() {
@@ -119,6 +121,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	public void limpiarMesa(LocalDateTime fin, Mesa mesa) {
 		verificarSesion();
 		mesa.liberarMesa();
+		this.mesasDesocupadas.add(mesa);
 		
 	}
 	
@@ -196,6 +199,60 @@ public class SistemaBoardGameCafe implements Serializable {
 	public Map<String, Mesa> getMesas() {
 	    return mesas;
 	}
+
+	public void asignarMesa(Cliente cliente) {
+		verificarSesion();
+		Mesa mesa = this.mesasDesocupadas.pop();
+		mesa.setClienteActual(cliente);
+
+
+	}
+	public void agregarEmpleado(Empleado empleado) {
+		verificarSesion();
+		this.empleados.put(empleado.getLogin()+empleado.getPassword(), empleado);
+	}
+	
+	public void agregarTurno(Turno turno) {
+		verificarSesion();
+		this.turnos.put(turno.getDiaSemana(), turno);
+	}
+	
+	public void agregarMesa(Mesa mesa) {
+		verificarSesion();
+		this.mesas.put(String.valueOf(this.mesas.size()+1), mesa);
+		this.mesasDesocupadas.push(mesa);
+	}
+
+	public void agregarProductoMenu(ProductoMenu producto) {
+		verificarSesion();
+		this.menu.put(producto.getNombre(), producto);
+		
+	}
+	
+	public void agregarPrestamoCliente(PrestamoCliente prestamo) {
+		verificarSesion();
+		this.historialPrestamosClientes.put(prestamo.getIdPrestamo(), prestamo);
+	}
+
+	public void agregarPrestamoEmpleado(PrestamoEmpleado prestamo) {
+		verificarSesion();
+		this.historailPrestamosEmpleados.put(prestamo.getIdPrestamo(), prestamo);
+	}
+	public void agregarSugerencia(Sugerencia sugerencia) {
+		verificarSesion();
+		this.Sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
+	}
+	public void agregarVenta(Venta venta) {
+		verificarSesion();
+		this.historialVenta.put(venta.getIdVenta(), venta);
+	}
+
+	public void agregarJuegoVender(JuegoMesa juego) {
+		verificarSesion();
+		this.inventarioVender.put(juego.getId(), juego);
+	}
+
+
 
 	// ver turnos siendo empleado TODO
 	

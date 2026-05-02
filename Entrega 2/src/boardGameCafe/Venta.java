@@ -90,5 +90,45 @@ public class Venta implements Serializable {
         this.propina = propina;
     }
 	
-	
+    public String getIdVenta() {
+		return idVenta;
+	}
+
+	public LocalDateTime getFecha() {
+		return fecha;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public ArrayList<ProductoMenu> getItemsVendidos() {
+		return itemsVendidos;
+	}
+    
+    public ArrayList<JuegoMesa> getJuegosVendidos() {
+		return juegosVendidos;
+	}
+    
+    public double getSubtotal() {
+		return subtotal;
+	}
+
+    public double getPropina() {
+		return propina;
+	}
+    
+    public double getTotal() {
+		return total;
+	}
+
+    public static double getImpuestoComun() {
+		return impuestoComun;
+	}
+
+    public static double getIvaJuegos() {
+		return ivaJuegos;
+	}
+
+    
 }
