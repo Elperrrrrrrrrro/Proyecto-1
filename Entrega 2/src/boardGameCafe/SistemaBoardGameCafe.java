@@ -178,7 +178,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	
 	public void registrarCliente(Cliente cliente) {
 		verificarSesion();
-		this.clientes.put(cliente.getDocumento(), cliente);
+		this.clientes.put(cliente.getDocumentoIdentidad(), cliente);
 	}
 	
 	public void agregarplatoaMesa(String idMesa, String nombrePlato) {

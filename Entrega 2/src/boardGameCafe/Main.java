@@ -40,7 +40,7 @@ public class Main {
         mesa.setClienteActual(cliente);
 
         // Agregar al sistema
-        sistema.getClientes().put(cliente.getDocumento(), cliente);
+        sistema.getClientes().put(cliente.getDocumentoIdentidad(), cliente);
         sistema.getInventario().put(juego.getId(), juego);
         sistema.getMesas().put("1", mesa);
 

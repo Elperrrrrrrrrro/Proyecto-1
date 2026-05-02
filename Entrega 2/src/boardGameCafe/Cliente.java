@@ -2,19 +2,16 @@ package boardGameCafe;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-public class Cliente implements Serializable {
-    private String nombre;
-    private String documento;
+public class Cliente extends Usuario   implements Serializable {
+
     private int puntosFidelidad;
-    private String login;
-    private String password;
+
+
     private List<JuegoMesa> juegosFavoritos;
 
     public Cliente(String nombre, String documento, String login, String password) {
-        this.nombre = nombre;
-        this.documento = documento;
-        this.login = login;
-        this.password = password;
+
+        super(nombre, documento, login, password);
         this.puntosFidelidad = 0;
         this.juegosFavoritos = new ArrayList<>();
     }
@@ -30,18 +27,11 @@ public class Cliente implements Serializable {
     }
 
     // Getters
-    public String getNombre() {
-    	return nombre; 
-    	}
-    public String getDocumento() { 
-    	return documento; 
-    	}
+
     public int getPuntosFidelidad() {
     	return puntosFidelidad; 
     	}
-    public String getLogin() { 
-    	return login;
-    	}
+
     public List<JuegoMesa> getJuegosFavoritos() {
         return juegosFavoritos;
     }
