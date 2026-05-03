@@ -18,10 +18,9 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, PrestamoCliente> historialPrestamosClientes;// llave id prestamo
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
 	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
+	private Queue<Sugerencia> sugerenciasPendientes;
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
-	// implementar cola de mesas para asignar mesas a los clientes de forma ordenada TODO
-	private Stack<Mesa> mesasDesocupadas;
-	// hacer una cola de sugerencias para que el administrador las revise en orden, y en la revision es cuando se agrega al historial TODO
+	private Queue<Mesa> mesasDesocupadas;
 	private Usuario usuarioActual ;
 	
 	private void verificarSesion() {
@@ -41,7 +40,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	        historialPrestamosClientes = new HashMap<>();
 	        historailPrestamosEmpleados = new HashMap<>();
 	        Sugerencias = new HashMap<>();
-			mesasDesocupadas = new Stack<>();
+	        sugerenciasPendientes = new LinkedList<>();
+	        mesasDesocupadas = new LinkedList<>();
 	        menu = new HashMap<>();
 	    }
 
@@ -127,44 +127,149 @@ public class SistemaBoardGameCafe implements Serializable {
 		
 	}
 	
-	public void registrarVenta(int idMesa, LocalDateTime fecha, Cliente cliente) {
-		verificarSesion();
-		String Id = String.valueOf(this.historialVenta.size()+1);
-		Venta venta = new Venta( Id,  fecha,  cliente);
-		//Falta implementacino TODO
-		this.historialVenta.put(Id, venta);
-		// puntos de fideluidad faltan , para hacer descuento , y que se adicionen a eñ cñiente 
-		// cantidad % propina que elijia el cliente 
-		// implementar compra por parte de los empleados TODO
-		
+	public void registrarVenta(Integer idMesa, LocalDateTime fecha, Usuario comprador, double propina,
+	        ArrayList<ProductoMenu> productosExtras,
+	        ArrayList<JuegoMesa> juegosComprados,
+	        boolean descuentoCompartido) {
+
+	    verificarSesion();
+
+	    String id = String.valueOf(this.historialVenta.size() + 1);
+	    Venta venta = new Venta(id, fecha, comprador);
+	    Mesa mesa = null;
+//cliente
+	    if (comprador instanceof Cliente) {
+	        if (idMesa == null) {
+	            throw new IllegalArgumentException("El cliente necesita una mesa.");
+	        }
+	        mesa = this.mesas.get(String.valueOf(idMesa));
+	        if (mesa == null) {
+	            throw new IllegalArgumentException("La mesa no existe.");
+	        }
+	        for (ProductoMenu producto : mesa.getPedidoActual()) {
+	            venta.agregarProducto(producto);
+	        }
+	    }
+	    // empleado
+	    if (comprador instanceof Empleado) {
+	        boolean hayClientes = !mesasDesocupadas.isEmpty(); 
+	        boolean enTurno = false; //falta ver esta parte bien 
+
+	        if (!((Empleado) comprador).puedeComprar(enTurno, hayClientes)) {
+	            throw new IllegalStateException("Empleado no puede comprar ahora.");
+	        }
+	        if (productosExtras != null) {
+	            for (ProductoMenu producto : productosExtras) {
+	                venta.agregarProducto(producto);
+	            }
+	        }
+	    }
+
+	    // ambos pueden comprar juegos
+	    if (juegosComprados != null) {
+	        for (JuegoMesa juego : juegosComprados) {
+
+	            if (!juego.isPrestado()) {
+	                venta.agregarJuegoComprado(juego);
+	                juego.setPrestado(true);
+	                this.inventarioVender.remove(juego.getId());
+	            }
+	        }
+	    }
+
+	    //propinas
+	    venta.setPropina(propina);
+	    //total
+	    double total = venta.calcularTotal();
+	    // descuentos
+	    if (comprador instanceof Empleado) {
+	        total *= 0.80;
+	    } else if (descuentoCompartido) {
+	        total *= 0.90;
+	    }
+	    //puntos de fidelifad
+	    if (comprador instanceof Cliente) {
+	        Cliente c = (Cliente) comprador;
+	        double descuento = c.usarPuntosFidelidad(total);
+	        total -= descuento;
+	        
+	        c.agregarPuntosFidelidad(total * 0.01);
+	    }
+	    venta.setTotal(total);
+	    this.historialVenta.put(id, venta);
 	}
-	
+		
+			
 	public boolean SolicitarCambioTurno(String idEmpleado, String dianuevo) {
 		verificarSesion();
 		String Id = String.valueOf(this.Sugerencias.size()+1);
 		try {
 			Sugerencia sugerencia = new Sugerencia(Id,false,false,dianuevo,this.empleados.get(idEmpleado),null) ;
-			this.Sugerencias.put(Id, sugerencia);
+			this.sugerenciasPendientes.offer(sugerencia);
 			return true;
 		}catch(Exception e) {
 			return false;
-		}
-		// Falta implementar intercambio con otro empleado TODO
+		}	
 	}
 	
 	public boolean aprobarCambioTurno(String idEmpleado, Sugerencia sugerencia) { //Tambien se usa para aprobar sugerencias de comida TODO
-		if (!(this.usuarioActual instanceof Administrador)) {
-			throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
-		}
+		    if (!(this.usuarioActual instanceof Administrador)) {
+		        throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
+		    }
+		    //si es para sugerencia de comida
+		    if (sugerencia.isTipoSugerencia()) {
+		        this.menu.put(
+		            sugerencia.getProductoMenu().getNombre(),
+		            sugerencia.getProductoMenu()
+		        );  
+		    } 
+ // si es para cambio de turno
+		    else {
+		        Empleado empleadoSolicitante = sugerencia.getEmpleado();
+		        String diaDestino = sugerencia.getDiaCambio();
 
-		if(sugerencia.isTipoSugerencia()) {
-			this.menu.put(sugerencia.getProductoMenu().getNombre(), sugerencia.getProductoMenu());
-		} else {
-			this.turnos.get(sugerencia.getDiaCambio()).adicionarEmpleado(this.empleados.get(idEmpleado)); 
+		        Turno turnoDestino = this.turnos.get(diaDestino);
+		        Turno turnoOrigen = null;
+
+		        // 1. encontrar el turno actual del empleado
+		        for (Turno t : this.turnos.values()) {
+		            if (t.getEmpleadosAsignados().contains(empleadoSolicitante)) {
+		                turnoOrigen = t;
+		                break;
+		            }
+		        }
+		        if (turnoDestino == null || turnoOrigen == null) {
+		            throw new IllegalStateException("Turnos inválidos para intercambio.");
+		        }
+		        //ver si se cumplen condiciones para el cambio
+		        if (!turnoOrigen.validarMinimoOperativo()) {
+		            throw new IllegalStateException(
+		                "No se puede realizar el cambio: el turno origen quedaría inválido."
+		            );
+		        }
+		        // quitar del turno atual
+		        turnoOrigen.getEmpleadosAsignados().remove(empleadoSolicitante);
+		        // intercambio con otro si se puede
+		        Empleado reemplazo = null;
+
+		        if (!turnoDestino.getEmpleadosAsignados().isEmpty()) {
+		            reemplazo = turnoDestino.getEmpleadosAsignados().get(0);
+		            turnoDestino.getEmpleadosAsignados().remove(reemplazo);
+		        }
+		        // mover empleado que pide el cambio
+		        turnoDestino.adicionarEmpleado(empleadoSolicitante);
+		        // poner al remplazo 
+		        if (reemplazo != null) {
+		            turnoOrigen.adicionarEmpleado(reemplazo);
+		        }
+		    }
+		    //cambiar el estado de la sug, se agrega a sugerencias y se elimina de las pendientes
+		    sugerencia.setEstaAprobado(true);
+		    this.Sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
+		    this.sugerenciasPendientes.remove(sugerencia);
+
+		    return true;
 		}
-		sugerencia.setEstaAprobado(true);
-		return true;
-	}
 	
 	public void agregarJuegoMesa(JuegoMesa juego) {
 		if (!(this.usuarioActual instanceof Administrador)) {
@@ -204,7 +309,10 @@ public class SistemaBoardGameCafe implements Serializable {
 
 	public void asignarMesa(Cliente cliente) {
 		verificarSesion();
-		Mesa mesa = this.mesasDesocupadas.pop();
+		Mesa mesa = this.mesasDesocupadas.poll();
+		if (mesa == null) {
+	        throw new IllegalStateException("No hay mesas disponibles.");
+	    }
 		mesa.setClienteActual(cliente);
 
 
@@ -222,7 +330,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	public void agregarMesa(Mesa mesa) {
 		verificarSesion();
 		this.mesas.put(String.valueOf(this.mesas.size()+1), mesa);
-		this.mesasDesocupadas.push(mesa);
+		this.mesasDesocupadas.offer(mesa);
 	}
 
 	public void agregarProductoMenu(ProductoMenu producto) {
@@ -254,19 +362,114 @@ public class SistemaBoardGameCafe implements Serializable {
 		this.inventarioVender.put(juego.getId(), juego);
 	}
 
+	public List<Turno> verTurnosEmpleado(String idEmpleado) {
+	    verificarSesion();
+	    Empleado empleado = this.empleados.get(idEmpleado);
+	    if (empleado == null) {
+	        throw new IllegalArgumentException("Empleado no existe.");
+	    }
+	    List<Turno> turnosEmpleado = new ArrayList<>();
+	    for (Turno t : this.turnos.values()) {
+	        if (t.getEmpleadosAsignados().contains(empleado)) {
+	            turnosEmpleado.add(t);
+	        }
+	    }
+	    return turnosEmpleado;
+	}
 
+	public boolean sugerirPlatillo(String idEmpleado, String nombreProducto) {
+	    verificarSesion();
+	    Empleado empleado = this.empleados.get(idEmpleado);
+	    if (empleado == null) {
+	        throw new IllegalArgumentException("Empleado no existe.");
+	    }
+	    ProductoMenu producto = this.menu.get(nombreProducto);
+	    if (producto == null) {
+	        throw new IllegalArgumentException("El producto no existe en el sistema.");
+	    } 
+	    String id = String.valueOf(this.Sugerencias.size() + 1);
+	    Sugerencia sugerencia = new Sugerencia( id,false,true,null, empleado, producto    		
+	    		);
+	    this.sugerenciasPendientes.offer(sugerencia);
+	    return true;
+	}
+	
+	
+	public void moverJuegoAInventarioVenta(String idJuego) {
+	    verificarSesion();
+	    JuegoMesa juego = this.inventario.get(idJuego);	   
+	    if (juego == null) {
+	        throw new IllegalArgumentException("El juego no existe en inventario de préstamo.");
+	    }
+	    if (juego.isPrestado()) {
+	        throw new IllegalStateException("El juego está prestado y no puede venderse aún.");
+	    }
+	    // mover a inventario de venta    
+	    this.inventarioVender.put(idJuego, juego);
+	    // quitar del inventario de préstamo
+	    this.inventario.remove(idJuego);
+	}
+	
+	public void cambiarTurnoDirecto(String idEmpleado, String diaOrigen, String diaDestino) {
+	    verificarSesion();
+	    if (!(this.usuarioActual instanceof Administrador)) {
+	        throw new SecurityException("Solo el administrador puede modificar turnos directamente.");
+	    }
+	    Empleado empleado = this.empleados.get(idEmpleado);
+	    if (empleado == null) {
+	        throw new IllegalArgumentException("Empleado no existe.");
+	    }
+	    Turno turnoOrigen = this.turnos.get(diaOrigen);
+	    Turno turnoDestino = this.turnos.get(diaDestino);
+	    if (turnoOrigen == null || turnoDestino == null) {
+	        throw new IllegalArgumentException("Turnos inválidos.");
+	    }
+	    if (!turnoOrigen.getEmpleadosAsignados().contains(empleado)) {
+	        throw new IllegalStateException("El empleado no está en el turno origen.");
+	    }
+	    // regla del minimo o
+	    if (!turnoOrigen.validarMinimoOperativo()) {
+	        throw new IllegalStateException("No se puede mover el empleado: el turno quedaría inválido.");
+	    }
+	    // mover empleado
+	    turnoOrigen.getEmpleadosAsignados().remove(empleado);
+	    turnoDestino.adicionarEmpleado(empleado);
+	}
+	public void generarInformeVentasDetallado(LocalDate inicio, LocalDate fin) {
+	    verificarSesion();
+	    if (!(this.usuarioActual instanceof Administrador)) {
+	        throw new SecurityException("Solo el administrador puede ver informes.");
+	    }
+	    for (Venta venta : historialVenta.values()) {
 
-	// ver turnos siendo empleado TODO
+	        LocalDate fechaVenta = venta.getFecha().toLocalDate();
+	        if (fechaVenta.isBefore(inicio) || fechaVenta.isAfter(fin)) {
+	            continue;
+	        }
+	        String idComprador = venta.getComprador().getDocumentoIdentidad();
+	        double comida = 0;
+	        double juegos = 0;
+	        for (ProductoMenu p : venta.getItemsVendidos()) {
+	            comida += p.getPrecioBase();
+	        }
+
+	        for (JuegoMesa j : venta.getJuegosVendidos()) {
+	            juegos += j.getPrecioVenta();
+	        }
+
+	        double impuestos = venta.calcularImpoconsumo() + venta.calcularIva();
+
+	        //esto en consola pero pa tener la idea
+	        System.out.println("Informe de venta");
+	        System.out.println("ID Venta: " + venta.getIdVenta());
+	        System.out.println("Fecha: " + venta.getFecha());
+	        System.out.println("ID Comprador: " + idComprador);
+	        System.out.println("Comida: " + comida);
+	        System.out.println("Juegos: " + juegos);
+	        System.out.println("Impuestos: " + impuestos);
+	        System.out.println("Propina: " + venta.getPropina());
+	        System.out.println("TOTAL: " + venta.getTotal());
+	    }
+	}
 	
-	// Sugerencias empleados TODO
-	
-	// Implementar cambiar de invenatario de prestamo a de venta juego TODO
-	
-	// Implementar que el administrador pueda modificar cambios de turno sin sugerencia TODO
-	
-	/* Implementar que el administrador pueda tener un informe: 'Debe tener acceso a un informe detallado
-	de todas las ventas, separadas por los diferentes rubros (juegos y comida), fechas en diferentes granularidades
-	(diaria, semanal y mensual), así como la posibilidad de ver estos valores de ventas segregados por costo,
-	impuestos y propinas.'
-	*/
 }

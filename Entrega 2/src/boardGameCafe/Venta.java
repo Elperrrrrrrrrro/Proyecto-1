@@ -7,7 +7,8 @@ public class Venta implements Serializable {
 	 
 	private String idVenta;
 	private LocalDateTime fecha;
-	private Cliente cliente;
+	//private Cliente cliente;
+	private Usuario comprador;
 	private ArrayList<ProductoMenu> itemsVendidos ;
 	private ArrayList<JuegoMesa> juegosVendidos;
 	private double subtotal;
@@ -17,10 +18,11 @@ public class Venta implements Serializable {
 	private double total;
 	
 
-    public Venta(String id, LocalDateTime fecha, Cliente cliente) {
+    public Venta(String id, LocalDateTime fecha, Usuario comprador) {
         this.idVenta = id;
         this.fecha = fecha; 
-        this.cliente = cliente;
+        this.comprador = comprador;
+        //this.cliente = cliente;
         
 
         this.itemsVendidos = new ArrayList<>();
@@ -63,33 +65,27 @@ public class Venta implements Serializable {
         return sumaJuegos * ivaJuegos; // Retorna el 19% de la suma
     }
     
-    public double calcularTotal(boolean esEmpleado) {
+    public double calcularTotal() {
+
         this.subtotal = 0.0;
-        
 
         for (ProductoMenu item : itemsVendidos) {
             this.subtotal += item.getPrecioBase();
         }
 
-        
+        double impoconsumo = calcularImpoconsumo();
+        double iva = calcularIva();
 
-        double valorImpoconsumo = calcularImpoconsumo();
-        double valorIva = calcularIva();
-        
+        this.total = this.subtotal + impoconsumo + iva + this.propina;
 
-        this.total = this.subtotal + valorImpoconsumo + valorIva + this.propina;
-        
-
-        if (esEmpleado) {
-            this.total = this.total * 0.80;
-        }
-        
         return this.total;
     }
-
-
+    
     public void setPropina(double propina) {
         this.propina = propina;
+    }
+    public void setTotal(double total) {
+        this.total = total;
     }
 	
     public String getIdVenta() {
@@ -100,8 +96,11 @@ public class Venta implements Serializable {
 		return fecha;
 	}
 
-	public Cliente getCliente() {
-		return cliente;
+	//public Cliente getCliente() {
+		//return cliente
+	//}
+	public Usuario getComprador() {
+	    return comprador;
 	}
 
 	public ArrayList<ProductoMenu> getItemsVendidos() {
