@@ -35,4 +35,10 @@ public class Cliente extends Usuario   implements Serializable {
     public List<JuegoMesa> getJuegosFavoritos() {
         return juegosFavoritos;
     }
+    
+    public double usarPuntosFidelidad(double total) {
+        double descuento = Math.min(puntosFidelidad, total);
+        this.puntosFidelidad -= (int) descuento;
+        return descuento;
+    }
 }
