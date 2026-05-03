@@ -2,6 +2,9 @@ package boardGameCafe;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import boardGameCafe.logic.*;
+import boardGameCafe.persistencia.Persistencia;
+import boardGameCafe.system.SistemaBoardGameCafe;
 
 public class Main {
 

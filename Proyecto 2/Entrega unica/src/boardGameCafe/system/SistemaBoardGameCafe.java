@@ -20,7 +20,6 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
 	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
-	// implementar cola de mesas para asignar mesas a los clientes de forma ordenada TODO
 	private Stack<Mesa> mesasDesocupadas;
 	// hacer una cola de sugerencias para que el administrador las revise en orden, y en la revision es cuando se agrega al historial TODO
 	private Usuario usuarioActual ;

@@ -4,9 +4,16 @@ import boardGameCafe.system.SistemaBoardGameCafe;
 
 public class Persistencia {
 
-		    private static final String ARCHIVO = "sistema.dat";
+		    private static final String CARPETA = "datos";
+		    private static final String ARCHIVO = CARPETA + File.separator + "sistema.dat";
 
 		    public static void guardarSistema(SistemaBoardGameCafe sistema) {
+		    	
+		    	File directorio = new File(CARPETA);
+		        if (!directorio.exists()) {
+		            directorio.mkdirs();
+		        }
+		    	
 		        try (ObjectOutputStream out = new ObjectOutputStream(
 		                new FileOutputStream(ARCHIVO))) {
 
