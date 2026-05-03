@@ -7,10 +7,10 @@ public class TorneoAmistoso extends Torneo {
 
     public TorneoAmistoso(String diaSemana, ArrayList<Usuario> participantes,
          JuegoMesa juego, int numeroPartisipantes, 
-         double PorsentajeDedescuento) {
+         double PorsentajeDedescuento,String ID) {
 
 
-        super(diaSemana, participantes, juego, numeroPartisipantes);
+        super(diaSemana, participantes, juego, numeroPartisipantes, ID);
         this.PorsentajeDedescuento = PorsentajeDedescuento;
     }
 

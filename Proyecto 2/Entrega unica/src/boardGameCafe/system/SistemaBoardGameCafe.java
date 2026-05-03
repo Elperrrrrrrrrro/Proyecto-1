@@ -23,6 +23,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Stack<Mesa> mesasDesocupadas;
 	// hacer una cola de sugerencias para que el administrador las revise en orden, y en la revision es cuando se agrega al historial TODO
 	private Usuario usuarioActual ;
+	private Map<String,Torneo> torneos; // aca  las llaves son las ID de los torneos 
+	
 	
 	private void verificarSesion() {
 		if (this.usuarioActual == null) {
@@ -253,6 +255,89 @@ public class SistemaBoardGameCafe implements Serializable {
 		verificarSesion();
 		this.inventarioVender.put(juego.getId(), juego);
 	}
+
+	public void CrearTorneoCompetitivo(String diaSemana, java.util.ArrayList<Usuario> participantes, 
+                             JuegoMesa juego, int numeroPartisipantes, double premio,double costo, String ID) {
+		verificarSesion();
+		if (!(this.usuarioActual instanceof Administrador)) {
+			throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
+		}
+		int juegosNecesarios = (int) Math.ceil((double) participantes.size() / juego.getMaxJugadores());
+		int juegosDisponibles = 0;
+		for (JuegoMesa j : inventario.values()) {
+			if (j.getNombre().equals(juego.getNombre()) && !j.isPrestado() && !"Malo".equals(j.getEstado())) {
+				juegosDisponibles++;
+			}
+		}
+		if (juegosDisponibles < juegosNecesarios) {
+			throw new IllegalStateException("No hay suficientes juegos disponibles para la cantidad de participantes.");
+		}
+
+		Torneo  torneo = new TorneoCompetitivo(  diaSemana, participantes, 
+                              juego,  numeroPartisipantes,  premio, costo,  ID);
+
+		this.torneos.put(ID, torneo);
+	}
+
+	public void CrearTorneoAmistoso(String diaSemana, ArrayList<Usuario> participantes,
+         JuegoMesa juego, int numeroPartisipantes, 
+         double PorsentajeDedescuento, String ID) {
+		verificarSesion();
+		if (!(this.usuarioActual instanceof Administrador)) {
+			throw new SecurityException("Acceso denegado: Solo el Administrador puede crear torneos.");
+		}
+		int juegosNecesarios = (int) Math.ceil((double) participantes.size() / juego.getMaxJugadores());
+		int juegosDisponibles = 0;
+		for (JuegoMesa j : inventario.values()) {
+			if (j.getNombre().equals(juego.getNombre()) && !j.isPrestado() && !"Malo".equals(j.getEstado())) {
+				juegosDisponibles++;
+			}
+		}
+
+		if (juegosDisponibles < juegosNecesarios) {
+			throw new IllegalStateException("No hay suficientes juegos disponibles para la cantidad de participantes.");
+		}
+
+		Torneo torneo = new TorneoAmistoso(diaSemana, participantes, 
+                              juego, numeroPartisipantes, PorsentajeDedescuento, ID);
+
+		this.torneos.put(ID, torneo);
+	}
+
+	public boolean inscribirseTorneoEmpleado(String idTorneo, String idEmpleado) {
+		verificarSesion();
+		Torneo torneo = this.torneos.get(idTorneo);
+		Empleado empleado = this.empleados.get(idEmpleado);
+
+		if (torneo == null || empleado == null) {
+			return false;
+		}
+
+		Turno turnoDia = this.turnos.get(torneo.getDiaSemana());
+		if (turnoDia != null && turnoDia.getEmpleadosAsignados().contains(empleado)) {
+
+			return false;
+		}
+
+
+		if (torneo.getParticipantes().size() >= torneo.getNumeroPartisipantes()) {
+			return false;
+		}
+
+
+		torneo.agregarParticipante(empleado);
+		return true;
+	}
+
+	public void DesiscribirUsuario(Usuario usuario , Torneo torneo){
+		torneo.getParticipantes().remove(usuario);
+	}
+
+
+	
+
+
+		
 
 
 
