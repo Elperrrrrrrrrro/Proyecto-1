@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 
 public class Sugerencia {
 	private boolean estaAprobado;

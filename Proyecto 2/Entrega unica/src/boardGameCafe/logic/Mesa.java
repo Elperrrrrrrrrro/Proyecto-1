@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 import java.util.*;
 import java.time.*;
 import java.io.Serializable;

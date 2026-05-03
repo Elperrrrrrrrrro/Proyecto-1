@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 import java.io.Serializable;
 public abstract class ProductoMenu implements Serializable {
 	private String nombre;

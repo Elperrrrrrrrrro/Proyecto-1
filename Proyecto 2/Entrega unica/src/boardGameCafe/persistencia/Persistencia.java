@@ -1,5 +1,7 @@
-package boardGameCafe;
+package boardGameCafe.persistencia;
 import java.io.*;
+import boardGameCafe.system.SistemaBoardGameCafe;
+
 public class Persistencia {
 
 		    private static final String ARCHIVO = "sistema.dat";

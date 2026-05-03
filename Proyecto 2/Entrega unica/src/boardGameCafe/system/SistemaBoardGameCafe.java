@@ -1,6 +1,9 @@
-package boardGameCafe;
+package boardGameCafe.system;
 
 import java.util.*;
+
+import boardGameCafe.logic.*;
+import boardGameCafe.persistencia.*;
 import java.io.Serializable;
 import java.time.*;
 

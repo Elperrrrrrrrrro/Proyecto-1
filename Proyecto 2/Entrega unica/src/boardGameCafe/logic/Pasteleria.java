@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 import java.io.Serializable;
 import java.util.*;
 public class Pasteleria extends ProductoMenu implements Serializable{

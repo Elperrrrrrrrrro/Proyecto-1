@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 import java.io.Serializable;
 
 public class Cocinero extends Empleado implements Serializable{

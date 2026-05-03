@@ -1,4 +1,4 @@
-package boardGameCafe;
+package boardGameCafe.logic;
 
 public abstract class Usuario {
     private String Nombre;
