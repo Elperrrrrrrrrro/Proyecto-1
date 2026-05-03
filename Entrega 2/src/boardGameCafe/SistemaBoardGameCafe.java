@@ -435,6 +435,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	    turnoOrigen.getEmpleadosAsignados().remove(empleado);
 	    turnoDestino.adicionarEmpleado(empleado);
 	}
+	
 	public void generarInformeVentasDetallado(LocalDate inicio, LocalDate fin) {
 	    verificarSesion();
 	    if (!(this.usuarioActual instanceof Administrador)) {
