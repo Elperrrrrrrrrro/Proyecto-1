@@ -6,6 +6,8 @@ import java.time.*;
 
 
 public class SistemaBoardGameCafe implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private Map<String, JuegoMesa> inventario; // llave id del juego
 	private Map<String, JuegoMesa> inventarioVender; // llave id del juego
 	private Map<String, Empleado> empleados; // llave es el login+password de los empleados

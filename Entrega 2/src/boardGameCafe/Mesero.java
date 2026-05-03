@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Mesero extends Empleado implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private List<JuegoMesa> juegosConocidos;
 	
 	public Mesero(String nombre, String documentoIdentidad, int edad, String login, String password, List<JuegoMesa> juegosConocidos) {

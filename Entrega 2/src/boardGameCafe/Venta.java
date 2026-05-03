@@ -3,6 +3,8 @@ import java.util.*;
 import java.time.*;
 import java.io.Serializable;
 public class Venta implements Serializable {
+	 private static final long serialVersionUID = 1L;
+	 
 	private String idVenta;
 	private LocalDateTime fecha;
 	private Cliente cliente;

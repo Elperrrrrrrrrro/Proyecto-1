@@ -3,7 +3,8 @@ import java.time.LocalDateTime;
 import java.io.Serializable;
 
 public class PrestamoCliente extends Prestamo implements Serializable{
-
+	private static final long serialVersionUID = 1L;
+	
     private Cliente cliente;
     
     //cambiar el constuctor en lase controladora
