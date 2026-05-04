@@ -1,6 +1,7 @@
 package boardGameCafe.logic;
-
-public class TorneoCompetitivo extends Torneo{
+import java.io.Serializable;
+public class TorneoCompetitivo extends Torneo implements Serializable{
+	private static final long serialVersionUID = 1L;
     private double costo;
     private double premio;
 

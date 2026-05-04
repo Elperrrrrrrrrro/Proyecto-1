@@ -1,7 +1,8 @@
 package boardGameCafe.logic;
 import java.util.ArrayList;
-
-public class Torneo {
+import java.io.Serializable;
+public class Torneo implements Serializable {
+	private static final long serialVersionUID = 1L;
     private String diaSemana;
     private ArrayList<Usuario> participantes;
     private JuegoMesa juego;

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.io.Serializable;
 
 public class PrestamoEmpleado extends Prestamo implements Serializable{
+	private static final long serialVersionUID = 1L;
 
     private Empleado empleado;
     private Map<String, Turno> turnos;

@@ -1,6 +1,7 @@
 package boardGameCafe.logic;
 import java.io.Serializable;
 public class Bebida extends ProductoMenu implements Serializable{
+private static final long serialVersionUID = 1L;
 private boolean esAlcoholica ;
 private boolean temperatura; 
 

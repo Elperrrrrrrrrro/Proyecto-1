@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public abstract class Prestamo implements Serializable {
+	private static final long serialVersionUID = 1L;
 
     protected String idPrestamo;
     protected JuegoMesa juego;
