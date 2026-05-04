@@ -45,6 +45,8 @@ public class SistemaBoardGameCafe implements Serializable {
 	        Sugerencias = new HashMap<>();
 			mesasDesocupadas = new Stack<>();
 	        menu = new HashMap<>();
+	        torneos = new HashMap<>();
+	        
 	    }
 
 	    public void guardar() {
@@ -335,7 +337,9 @@ public class SistemaBoardGameCafe implements Serializable {
 		torneo.getParticipantes().remove(usuario);
 	}
 
-
+	public void agregarEmpleadoPrueba(Empleado empleado) {
+		this.empleados.put(empleado.getLogin()+empleado.getPassword(), empleado);
+	}
 	
 
 

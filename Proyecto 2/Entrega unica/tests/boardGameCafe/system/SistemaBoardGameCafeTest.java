@@ -1,12 +1,13 @@
 package boardGameCafe.system;
 
 import java.util.*;
-import boardGameCafe.logic.*;
-import boardGameCafe.persistencia.*;
-import java.io.Serializable;
-import java.time.*;
-import org.junit.jupiter.api.Test;
+
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import boardGameCafe.logic.*;
+
+import java.time.*;
 
 
 
@@ -39,7 +40,7 @@ public class SistemaBoardGameCafeTest {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         // Corrección del constructor: (nombre, documento, edad, login, password)
         boardGameCafe.logic.Empleado emp = new boardGameCafe.logic.Empleado("Admin", "123", 30, "admin", "123");
-        
+        sistema.agregarEmpleadoPrueba(emp);
         sistema.inciarSesion("admin", "123");
         // No debería lanzar excepción si la sesión es válida
         Assertions.assertDoesNotThrow(() -> {
@@ -56,6 +57,7 @@ public class SistemaBoardGameCafeTest {
         Empleado emp = new Empleado("Admin", "123", 30, "admin", "123");
         
         // Inyectamos el empleado para poder operar
+        sistema.agregarEmpleadoPrueba(emp);
         sistema.inciarSesion("admin", "123");
         
         Cliente cliente = new Cliente("Carlos", "1010", "carlos@mail.com", "300");
@@ -89,6 +91,7 @@ public class SistemaBoardGameCafeTest {
         // Simulamos un inicio de sesión para cumplir con verificarSesion()
         // Constructor Empleado: (nombre, documento, edad, login, password)
         Empleado emp = new Empleado("Admin", "123", 30, "admin", "123");
+        sistema.agregarEmpleadoPrueba(emp);
         sistema.inciarSesion("admin", "123");
 
         // Configuración de una mesa ocupada con un préstamo activo
