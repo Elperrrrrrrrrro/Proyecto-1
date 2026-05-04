@@ -24,5 +24,8 @@ public class Empleado extends Usuario   implements  Serializable{
   public List<JuegoMesa> getJuegosConocidos() {
             return juegosConocidos;
   }
+  public boolean puedeComprar(boolean enTurno, boolean hayClientes) {
+	    return !enTurno || !hayClientes;
+	}
 
 }

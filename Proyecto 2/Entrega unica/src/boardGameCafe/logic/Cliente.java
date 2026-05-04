@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 public class Cliente extends Usuario   implements Serializable {
+	private static final long serialVersionUID = 1L;
 
     private int puntosFidelidad;
 
@@ -34,5 +35,10 @@ public class Cliente extends Usuario   implements Serializable {
 
     public List<JuegoMesa> getJuegosFavoritos() {
         return juegosFavoritos;
+    }
+    public double usarPuntosFidelidad(double total) {
+        double descuento = Math.min(puntosFidelidad, total);
+        this.puntosFidelidad -= (int) descuento;
+        return descuento;
     }
 }

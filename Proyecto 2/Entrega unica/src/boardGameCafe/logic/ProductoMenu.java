@@ -1,6 +1,7 @@
 package boardGameCafe.logic;
 import java.io.Serializable;
 public abstract class ProductoMenu implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String nombre;
 	private double precioBase;
 	private String codigoItem ;

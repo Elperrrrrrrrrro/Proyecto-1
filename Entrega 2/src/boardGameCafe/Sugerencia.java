@@ -15,12 +15,28 @@ public class Sugerencia {
                       Empleado empleado, ProductoMenu productoMenu) {
     	this.sugerenciaID = sugerenciaID;
         this.estaAprobado = estaAprobado;
-        this.tipoSugerencia = tipoSugerencia;
-        this.diaCambio = diaCambio;
         this.empleado = empleado;
-        this.productoMenu = productoMenu;
+        this.tipoSugerencia = tipoSugerencia;
+  
+        if (tipoSugerencia) {
+      // es comida
+        	if (productoMenu == null) {
+          throw new IllegalArgumentException("Una sugerencia de comida debe tener productoMenu.");
+        	}
+        	this.productoMenu = productoMenu;
+        	this.diaCambio = null;
+        } else {
+      // sugerencia de turnos
+        	if (diaCambio == null) {
+        		throw new IllegalArgumentException("Una sugerencia de turno debe tener diaCambio.");
+        	}
+        	this.diaCambio = diaCambio;
+        	this.productoMenu = null;
+        }
     }
-    // Arreglar constructor para el tipo de sugerenacia TODO
+   
+
+   
 
     // --- MÉTODOS GET (Para todos los atributos) ---
     

@@ -2,6 +2,7 @@ package boardGameCafe.logic;
 import java.io.Serializable;
 import java.util.*;
 public class Pasteleria extends ProductoMenu implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private ArrayList<String> alergenos;
 	public Pasteleria(String nombre, String codigo  , 
 			 double precioBase,String codigoItem,String descripcion, ArrayList<String> alergenos) {

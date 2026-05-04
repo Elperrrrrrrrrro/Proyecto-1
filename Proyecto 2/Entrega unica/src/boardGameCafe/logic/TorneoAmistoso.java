@@ -1,7 +1,8 @@
 package boardGameCafe.logic ;
 import java.util.*;
-
-public class TorneoAmistoso extends Torneo {
+import java.io.Serializable;
+public class TorneoAmistoso extends Torneo implements Serializable{
+	private static final long serialVersionUID = 1L;
     private double PorsentajeDedescuento;
 
 

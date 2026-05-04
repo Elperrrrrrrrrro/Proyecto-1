@@ -157,6 +157,8 @@ public class JuegoMesa implements Serializable{
 	public void setPrecioVenta(double precioVenta) {
 		this.precioVenta = precioVenta;
 	}
-	
+	public void vender() {
+	    this.prestado = true;
+	}
 	
 }

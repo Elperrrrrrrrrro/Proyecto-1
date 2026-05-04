@@ -1,19 +1,20 @@
 package boardGameCafe.logic;
 import java.util.ArrayList;
-
-public class Torneo {
+import java.io.Serializable;
+public class Torneo implements Serializable {
+	private static final long serialVersionUID = 1L;
     private String diaSemana;
     private ArrayList<Usuario> participantes;
     private JuegoMesa juego;
-    private String ID;
+    private String id;
     private int numeroPartisipantes;
 
-        public Torneo(String diaSemana, ArrayList<Usuario> participantes, JuegoMesa juego, int numeroPartisipantes, String ID ) {
+        public Torneo(String diaSemana, ArrayList<Usuario> participantes, JuegoMesa juego, int numeroPartisipantes, String id ) {
         this.diaSemana = diaSemana;
         this.participantes = participantes;
         this.juego = juego;
         this.numeroPartisipantes = numeroPartisipantes;
-        this.ID = ID;
+        this.id = id;
     }
 
     public String getDiaSemana() {
@@ -31,8 +32,8 @@ public class Torneo {
     public int getNumeroPartisipantes() {
         return numeroPartisipantes;
     }
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
     public void agregarParticipante(Usuario participante) {

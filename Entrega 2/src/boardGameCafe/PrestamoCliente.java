@@ -7,7 +7,6 @@ public class PrestamoCliente extends Prestamo implements Serializable{
 	
     private Cliente cliente;
     
-    //cambiar el constuctor en lase controladora
     public PrestamoCliente(String idPrestamo,JuegoMesa juego, LocalDateTime inicio, LocalDateTime entrega, Cliente cliente) {
         super(idPrestamo,juego, inicio, entrega);
         this.cliente = cliente;
