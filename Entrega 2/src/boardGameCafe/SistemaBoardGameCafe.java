@@ -49,12 +49,28 @@ public class SistemaBoardGameCafe implements Serializable {
 	        Persistencia.guardarSistema(this);
 	    }
 	
-	public void cargarDatos() {  // carga de datos falta percistencia
+	public void cargarDatos() {  
+		SistemaBoardGameCafe sistema = Persistencia.cargarSistema();
+
+	    this.inventario = sistema.inventario;
+	    this.inventarioVender = sistema.inventarioVender;
+	    this.empleados = sistema.empleados;
+	    this.clientes = sistema.clientes;
+	    this.mesas = sistema.mesas;
+	    this.turnos = sistema.turnos;
+	    this.historialVenta = sistema.historialVenta;
+	    this.historialPrestamosClientes = sistema.historialPrestamosClientes;
+	    this.historailPrestamosEmpleados = sistema.historailPrestamosEmpleados;
+	    this.Sugerencias = sistema.Sugerencias;
+	    this.sugerenciasPendientes = sistema.sugerenciasPendientes;
+	    this.menu = sistema.menu;
+	    this.mesasDesocupadas = sistema.mesasDesocupadas;
 		
 	}
 	
-	public void guardarDatos() {  // guardar datos falta percistencia 
-		
+	public void guardarDatos() { 
+		verificarSesion();  
+		Persistencia.guardarSistema(this); 	
 	}
 	
 	public boolean inciarSesion(String login, String password) {
@@ -152,10 +168,12 @@ public class SistemaBoardGameCafe implements Serializable {
 	    }
 	    // empleado
 	    if (comprador instanceof Empleado) {
-	        boolean hayClientes = !mesasDesocupadas.isEmpty(); 
-	        boolean enTurno = false; //falta ver esta parte bien 
+	    	 Empleado empleado = (Empleado) comprador;
+	    	    String idEmpleado = empleado.getLogin() + empleado.getPassword();
 
-	        if (!((Empleado) comprador).puedeComprar(enTurno, hayClientes)) {
+	    	    boolean enTurno = empleadoEnTurno(idEmpleado);
+
+	        if (!empleado.puedeComprar(enTurno, !mesasDesocupadas.isEmpty())) {
 	            throw new IllegalStateException("Empleado no puede comprar ahora.");
 	        }
 	        if (productosExtras != null) {
@@ -410,6 +428,10 @@ public class SistemaBoardGameCafe implements Serializable {
 	    this.inventario.remove(idJuego);
 	}
 	
+	public boolean empleadoEnTurno(String idEmpleado) {
+	    return !verTurnosEmpleado(idEmpleado).isEmpty();
+	}
+	
 	public void cambiarTurnoDirecto(String idEmpleado, String diaOrigen, String diaDestino) {
 	    verificarSesion();
 	    if (!(this.usuarioActual instanceof Administrador)) {
@@ -435,6 +457,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	    turnoOrigen.getEmpleadosAsignados().remove(empleado);
 	    turnoDestino.adicionarEmpleado(empleado);
 	}
+	
 	public void generarInformeVentasDetallado(LocalDate inicio, LocalDate fin) {
 	    verificarSesion();
 	    if (!(this.usuarioActual instanceof Administrador)) {
