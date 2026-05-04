@@ -11,10 +11,14 @@ public class Mesero extends Empleado implements Serializable {
 		this.juegosConocidos = juegosConocidos;
 	}
 	
+    public void adicionarJuegoConocido(JuegoMesa juego) {
+        if (!juegosConocidos.contains(juego)) {
+            juegosConocidos.add(juego);
+        }
+    }
+    
 	public List<JuegoMesa> getJuegosConocidos() {
 		return juegosConocidos;
 	}
-	public void addJuegoConocido(JuegoMesa juego) {
-		this.juegosConocidos.add(juego);
-	}
+	
 }

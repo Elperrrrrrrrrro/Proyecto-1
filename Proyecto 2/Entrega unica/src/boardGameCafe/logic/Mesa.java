@@ -4,7 +4,7 @@ import java.time.*;
 import java.io.Serializable;
 public class Mesa implements Serializable{
 	private static final long serialVersionUID = 1L;
-	private int numeroMesa;
+	private String idMesa;
 	private Cliente clienteActual;
 	private ArrayList<ProductoMenu> pedidoActual;
 	private ArrayList<Prestamo>prestamosActivos;
@@ -13,8 +13,8 @@ public class Mesa implements Serializable{
 	private ArrayList<String> alergenos;
 	private boolean hayInfantes;
 	
-	public Mesa(int numero, int cantidad, boolean menores, ArrayList<String> alergenos,boolean hayInfantes) {
-		this.numeroMesa= numero;
+	public Mesa(String id, int cantidad, boolean menores, ArrayList<String> alergenos,boolean hayInfantes) {
+		this.idMesa = id;
 		this.cantidadPersonas = cantidad;
 		this.hayMenores = menores; 
 		this.alergenos = alergenos;
@@ -25,8 +25,8 @@ public class Mesa implements Serializable{
 
 		
 	}
-	public int getNumeroMesa() {
-		return numeroMesa;
+	public String getIdMesa() {
+		return idMesa;
 	}
 	public Cliente getClienteActual() {
 		return clienteActual;
@@ -78,8 +78,8 @@ public class Mesa implements Serializable{
 	public ArrayList<ProductoMenu> getPedidoActual() {
 		return pedidoActual;
 	}
-	public void setNumeroMesa(int numeroMesa) {
-		this.numeroMesa = numeroMesa;
+	public void setNumeroMesa(String idMesa) {
+		this.idMesa = idMesa;
 	}
 	public void setCantidadPersonas(int cantidadPersonas) {
 		this.cantidadPersonas = cantidadPersonas;

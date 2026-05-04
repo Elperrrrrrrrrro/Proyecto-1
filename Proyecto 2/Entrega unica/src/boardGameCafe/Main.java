@@ -39,7 +39,7 @@ public class Main {
 
         // Crear mesa
         ArrayList<String> alergenos = new ArrayList<>();
-        Mesa mesa = new Mesa(1, 3, false, alergenos, false);
+        Mesa mesa = new Mesa("1", 3, false, alergenos, false);
         mesa.setClienteActual(cliente);
 
         // Agregar al sistema

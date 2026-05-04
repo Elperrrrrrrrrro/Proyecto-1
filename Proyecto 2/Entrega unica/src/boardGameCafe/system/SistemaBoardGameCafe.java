@@ -11,6 +11,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Map<String, JuegoMesa> inventario; // llave id del juego
 	private Map<String, JuegoMesa> inventarioVender; // llave id del juego
+	private Map<String, Administrador> administradores; // llave login+password de los administradores
 	private Map<String, Empleado> empleados; // llave es el login+password de los empleados
 	private Map<String, Cliente> clientes; // llave documento clientes
 	private Map<String, Mesa> mesas; //llave numero mesa 
@@ -18,7 +19,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	private Map<String, Venta> historialVenta ; // la llave es el ID venta
 	private Map<String, PrestamoCliente> historialPrestamosClientes;// llave id prestamo
 	private Map<String, PrestamoEmpleado> historailPrestamosEmpleados;// llave id prestamo
-	private Map<String, Sugerencia> Sugerencias; // llave id sugerencia
+	private Map<String, Sugerencia> sugerencias; // llave id sugerencia
 	private Queue<Sugerencia> sugerenciasPendientes;
 	private Map<String, ProductoMenu> menu; // llave nombre del plato
 	private Queue<Mesa> mesasDesocupadas;
@@ -42,14 +43,10 @@ public class SistemaBoardGameCafe implements Serializable {
 	        historialVenta = new HashMap<>();
 	        historialPrestamosClientes = new HashMap<>();
 	        historailPrestamosEmpleados = new HashMap<>();
-	        Sugerencias = new HashMap<>();
+	        sugerencias = new HashMap<>();
 	        sugerenciasPendientes = new LinkedList<>();
 			mesasDesocupadas =  new LinkedList<>();
 	        menu = new HashMap<>();
-	    }
-
-	    public void guardar() {
-	        Persistencia.guardarSistema(this);
 	    }
 	
 	public void cargarDatos() {  
@@ -64,7 +61,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	    this.historialVenta = sistema.historialVenta;
 	    this.historialPrestamosClientes = sistema.historialPrestamosClientes;
 	    this.historailPrestamosEmpleados = sistema.historailPrestamosEmpleados;
-	    this.Sugerencias = sistema.Sugerencias;
+	    this.sugerencias = sistema.sugerencias;
 	    this.sugerenciasPendientes = sistema.sugerenciasPendientes;
 	    this.menu = sistema.menu;
 	    this.mesasDesocupadas = sistema.mesasDesocupadas;
@@ -76,11 +73,30 @@ public class SistemaBoardGameCafe implements Serializable {
 		Persistencia.guardarSistema(this); 	
 	}
 	
-	public boolean inciarSesion(String login, String password) {
+	public boolean iniciarSesionCliente(String documentoIdentidad) {
 		try {
-			
-			this.usuarioActual = this.empleados.get(login+password);
-			return true;
+			Cliente cliente = this.clientes.get(documentoIdentidad);
+			if (cliente != null && cliente instanceof Cliente) {
+				this.usuarioActual = cliente;
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		
+	}
+	
+	public boolean inciarSesionEmpleado(String login, String password) {
+		try {
+			Empleado empleado = this.empleados.get(login+password);
+			if (empleado != null && empleado instanceof Empleado) {
+				this.usuarioActual = empleado;
+				return true;
+			} else {
+				return false;
+			}
 		}
 		catch(Exception e) {
 			return false; 	
@@ -89,12 +105,26 @@ public class SistemaBoardGameCafe implements Serializable {
 
 	}
 	
+	public boolean iniciarSesionAdministrador(String login, String password) {
+		try {
+			Usuario admin = this.administradores.get(login+password);
+			if (admin != null && admin instanceof Administrador) {
+				this.usuarioActual = admin;
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public boolean cerrarSesion() {
 		this.usuarioActual = null;
 		return true;
 	}
 	
-	public boolean procesarPrestamo(String idJuego, int idMesa, boolean esCliente, Cliente cliente 
+	public boolean procesarPrestamo(String idJuego, String idMesa, boolean esCliente, Cliente cliente 
 			, Empleado empleado , JuegoMesa juego,  LocalDateTime inicio) {
 		
 		
@@ -220,12 +250,12 @@ public class SistemaBoardGameCafe implements Serializable {
 	    this.historialVenta.put(id, venta);
 	}
 	
-	public boolean SolicitarCambioTurno(String idEmpleado, String dianuevo) {
+	public boolean SolicitarCambioTurno(String idEmpleado, String diaNuevo) {
 		verificarSesion();
-		String Id = String.valueOf(this.Sugerencias.size()+1);
+		String Id = String.valueOf(this.sugerencias.size()+1);
 		try {
-			Sugerencia sugerencia = new Sugerencia(Id,false,false,dianuevo,this.empleados.get(idEmpleado),null) ;
-			this.Sugerencias.put(Id, sugerencia);
+			Sugerencia sugerencia = new Sugerencia(Id,false,false,diaNuevo,this.empleados.get(idEmpleado),null) ;
+			this.sugerencias.put(Id, sugerencia);
 			return true;
 		}catch(Exception e) {
 			return false;
@@ -285,7 +315,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	    }
 	    //cambiar el estado de la sug, se agrega a sugerencias y se elimina de las pendientes
 	    sugerencia.setEstaAprobado(true);
-	    this.Sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
+	    this.sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
 	    this.sugerenciasPendientes.remove(sugerencia);
 
 	    return true;
@@ -367,7 +397,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	}
 	public void agregarSugerencia(Sugerencia sugerencia) {
 		verificarSesion();
-		this.Sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
+		this.sugerencias.put(sugerencia.getSugerenciaID(), sugerencia);
 	}
 	public void agregarVenta(Venta venta) {
 		verificarSesion();
@@ -379,8 +409,8 @@ public class SistemaBoardGameCafe implements Serializable {
 		this.inventarioVender.put(juego.getId(), juego);
 	}
 
-	public void CrearTorneoCompetitivo(String diaSemana, java.util.ArrayList<Usuario> participantes, 
-                             JuegoMesa juego, int numeroPartisipantes, double premio,double costo, String ID) {
+	public void CrearTorneoCompetitivo(String diaSemana, ArrayList<Usuario> participantes, 
+                             JuegoMesa juego, int numeroPartisipantes, double premio,double costo, String id) {
 		verificarSesion();
 		if (!(this.usuarioActual instanceof Administrador)) {
 			throw new SecurityException("Acceso denegado: Solo el Administrador puede aprobar cambios de turno.");
@@ -397,14 +427,14 @@ public class SistemaBoardGameCafe implements Serializable {
 		}
 
 		Torneo  torneo = new TorneoCompetitivo(  diaSemana, participantes, 
-                              juego,  numeroPartisipantes,  premio, costo,  ID);
+                              juego,  numeroPartisipantes,  premio, costo,  id);
 
-		this.torneos.put(ID, torneo);
+		this.torneos.put(id, torneo);
 	}
 
 	public void CrearTorneoAmistoso(String diaSemana, ArrayList<Usuario> participantes,
          JuegoMesa juego, int numeroPartisipantes, 
-         double PorsentajeDedescuento, String ID) {
+         double PorsentajeDedescuento, String id) {
 		verificarSesion();
 		if (!(this.usuarioActual instanceof Administrador)) {
 			throw new SecurityException("Acceso denegado: Solo el Administrador puede crear torneos.");
@@ -422,9 +452,9 @@ public class SistemaBoardGameCafe implements Serializable {
 		}
 
 		Torneo torneo = new TorneoAmistoso(diaSemana, participantes, 
-                              juego, numeroPartisipantes, PorsentajeDedescuento, ID);
+                              juego, numeroPartisipantes, PorsentajeDedescuento, id);
 
-		this.torneos.put(ID, torneo);
+		this.torneos.put(id, torneo);
 	}
 
 	public boolean inscribirseTorneoEmpleado(String idTorneo, String idEmpleado) {
@@ -481,7 +511,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	    if (producto == null) {
 	        throw new IllegalArgumentException("El producto no existe en el sistema.");
 	    } 
-	    String id = String.valueOf(this.Sugerencias.size() + 1);
+	    String id = String.valueOf(this.sugerencias.size() + 1);
 	    Sugerencia sugerencia = new Sugerencia( id,false,true,null, empleado, producto    		
 	    		);
 	    this.sugerenciasPendientes.offer(sugerencia);
