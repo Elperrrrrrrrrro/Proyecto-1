@@ -1,89 +1,88 @@
 package boardGameCafe;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import boardGameCafe.logic.*;
-import boardGameCafe.persistencia.Persistencia;
+import java.util.Scanner;
+
+import boardGameCafe.logic.Administrador;
 import boardGameCafe.system.SistemaBoardGameCafe;
+import boardGameCafe.ui.ConsolaAdministrador;
+import boardGameCafe.ui.ConsolaCliente;
+import boardGameCafe.ui.ConsolaEmpleado;
 
 public class Main {
-
     public static void main(String[] args) {
+    	SistemaBoardGameCafe sistema = cargarSistema();
+    	ConsolaAdministrador consolaAdministrador = new ConsolaAdministrador(sistema);
+    	ConsolaCliente consolaCliente = new ConsolaCliente(sistema);
+    	ConsolaEmpleado consolaEmpleado = new ConsolaEmpleado(sistema);
 
-        // Cargar sistema (si no existe, crea uno nuevo)
-        SistemaBoardGameCafe sistema = Persistencia.cargarSistema();
+    	mostrarMenuTipoUsuario(consolaAdministrador, consolaCliente, consolaEmpleado);
+    }
 
+    private static SistemaBoardGameCafe cargarSistema() {
+    	SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
+    	
+    	sistema.cargarDatos();
+    	
+    	if (sistema.getAdministradores().isEmpty()) {
+			Administrador adminInicial = crearAdminInicial();
+			sistema.registrarAdministrador(adminInicial);
+			sistema.guardarDatos();
+			mostrarCredencialesIniciales(adminInicial);
+		}
+    	
+    	return sistema;
+    	
+    }
 
-        //Crear datos de prueba SOLO si está vacío
-        if (sistema == null) {
-            sistema = new SistemaBoardGameCafe();
-        }
+    private static Administrador crearAdminInicial() {
+    	String login = "admin";
+    	String password = "123456789";
+    	return new Administrador("Administrador", "0000000000", login, password);
+    }
 
-        // Crear cliente
-        Cliente cliente = new Cliente("Juan", "123", "juan", "1234");
+    private static void mostrarCredencialesIniciales(Administrador adminInicial) {
+    	System.out.println("Administrador inicial creado.");
+    	System.out.println("Usuario: " + adminInicial.getLogin());
+    	System.out.println("Contrasena: " + adminInicial.getPassword());
+    }
 
-        // Crear juego
-        JuegoMesa juego = new JuegoMesa(
-                "J1",
-                "Catan",
-                2010,
-                "Devir",
-                2,
-                4,
-                "Estrategia",
-                false,
-                "nuevo",
-                false,
-                50000
-        );
+    private static void mostrarMenuTipoUsuario(
+    			ConsolaAdministrador consolaAdministrador,
+    			ConsolaCliente consolaCliente,
+    			ConsolaEmpleado consolaEmpleado) {
+    	Scanner scanner = new Scanner(System.in);
+    	
+    	
+    	boolean continuar = true;
 
-        // Crear mesa
-        ArrayList<String> alergenos = new ArrayList<>();
-        Mesa mesa = new Mesa("1", 3, false, alergenos, false);
-        mesa.setClienteActual(cliente);
+    	while (continuar) {
+    		System.out.println("Seleccione el tipo de usuario para iniciar sesion:");
+    		System.out.println("1. Cliente");
+    		System.out.println("2. Empleado");
+    		System.out.println("3. Administrador");
+    		System.out.println("0. Salir");
 
-        // Agregar al sistema
-        sistema.getClientes().put(cliente.getDocumentoIdentidad(), cliente);
-        sistema.getInventario().put(juego.getId(), juego);
-        sistema.getMesas().put("1", mesa);
+    		String opcion = scanner.nextLine().trim();
 
-        //  Crear préstamo
-        PrestamoCliente prestamo = new PrestamoCliente(
-                "P1",
-                juego,
-                LocalDateTime.now(),
-                null,
-                cliente
-        );
+    		switch (opcion) {
+    		case "1":
+    			consolaCliente.iniciar();
+    			break;
+    		case "2":
+    			consolaEmpleado.iniciar();
+    			break;
+    		case "3":
+    			consolaAdministrador.iniciar();
+    			break;
+    		case "0":
+    			continuar = false;
+    			break;
+    		default:
+    			System.out.println("Opcion invalida. Intente de nuevo.");
+    			break;
+    		}
+    	}
 
-        if (prestamo.sonAptos(mesa)) {
-            mesa.AgregarPrestamo(prestamo);
-            juego.setPrestado(true);
-            System.out.println(" Préstamo realizado");
-        } else {
-            System.out.println("No se pudo realizar préstamo");
-        }
-
-        // Guardar sistema
-        Persistencia.guardarSistema(sistema);
-
-        System.out.println(" Sistema guardado");
-
-        //  Cargar otra vez
-        SistemaBoardGameCafe sistemaCargado = Persistencia.cargarSistema();
-
-
-        // Verificar datos
-        System.out.println("Clientes cargados: " + sistemaCargado.getClientes().size());
-        System.out.println("Juegos en inventario: " + sistemaCargado.getInventario().size());
-        System.out.println("Mesas: " + sistemaCargado.getMesas().size());
-
-        Mesa mesaCargada = sistemaCargado.getMesas().get("1");
-
-        if (mesaCargada != null) {
-            System.out.println("Préstamos en mesa: " + mesaCargada.getPrestamoActicos().size());
-        }
-
-        System.out.println("Fin");
+    	scanner.close();
     }
 }

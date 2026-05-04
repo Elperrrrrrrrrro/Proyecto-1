@@ -35,25 +35,28 @@ public class SistemaBoardGameCafe implements Serializable {
 	
 	public SistemaBoardGameCafe() {
 		    inventario = new HashMap<>();
-	        inventarioVender = new HashMap<>();
-	        empleados = new HashMap<>();
-	        clientes = new HashMap<>();
-	        mesas = new HashMap<>();
-	        turnos = new HashMap<>();
-	        historialVenta = new HashMap<>();
-	        historialPrestamosClientes = new HashMap<>();
-	        historailPrestamosEmpleados = new HashMap<>();
-	        sugerencias = new HashMap<>();
-	        sugerenciasPendientes = new LinkedList<>();
-			mesasDesocupadas =  new LinkedList<>();
-	        menu = new HashMap<>();
-	    }
+        inventarioVender = new HashMap<>();
+        administradores = new HashMap<>();
+        empleados = new HashMap<>();
+        clientes = new HashMap<>();
+        mesas = new HashMap<>();
+        turnos = new HashMap<>();
+        historialVenta = new HashMap<>();
+        historialPrestamosClientes = new HashMap<>();
+        historailPrestamosEmpleados = new HashMap<>();
+        sugerencias = new HashMap<>();
+        sugerenciasPendientes = new LinkedList<>();
+		mesasDesocupadas =  new LinkedList<>();
+        menu = new HashMap<>();
+        torneos = new HashMap<>();
+    }
 	
 	public void cargarDatos() {  
 		SistemaBoardGameCafe sistema = Persistencia.cargarSistema();
 
 	    this.inventario = sistema.inventario;
 	    this.inventarioVender = sistema.inventarioVender;
+	    this.administradores = sistema.administradores;
 	    this.empleados = sistema.empleados;
 	    this.clientes = sistema.clientes;
 	    this.mesas = sistema.mesas;
@@ -65,11 +68,21 @@ public class SistemaBoardGameCafe implements Serializable {
 	    this.sugerenciasPendientes = sistema.sugerenciasPendientes;
 	    this.menu = sistema.menu;
 	    this.mesasDesocupadas = sistema.mesasDesocupadas;
-		
+	    this.torneos = sistema.torneos;
+	}
+
+	public void registrarAdministrador(Administrador admin) {
+		if (this.administradores == null) {
+			this.administradores = new HashMap<>();
+		}
+		this.administradores.put(admin.getLogin() + admin.getPassword(), admin);
+	}
+	
+	public Map<String, Administrador> getAdministradores() {
+	    return administradores;
 	}
 	
 	public void guardarDatos() { 
-		verificarSesion();  
 		Persistencia.guardarSistema(this); 	
 	}
 	
