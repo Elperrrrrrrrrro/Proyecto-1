@@ -277,6 +277,8 @@ public class SistemaBoardGameCafe implements Serializable {
                               juego,  numeroPartisipantes,  premio, costo,  ID);
 
 		this.torneos.put(ID, torneo);
+		// aca falta lo que les dije que no supe que hacer TODO
+
 	}
 
 	public void CrearTorneoAmistoso(String diaSemana, ArrayList<Usuario> participantes,
@@ -354,4 +356,6 @@ public class SistemaBoardGameCafe implements Serializable {
 	(diaria, semanal y mensual), así como la posibilidad de ver estos valores de ventas segregados por costo,
 	impuestos y propinas.'
 	*/
+
+	
 }
