@@ -46,10 +46,29 @@ public class SistemaBoardGameCafe implements Serializable {
         historailPrestamosEmpleados = new HashMap<>();
         sugerencias = new HashMap<>();
         sugerenciasPendientes = new LinkedList<>();
-		mesasDesocupadas =  new LinkedList<>();
+		    mesasDesocupadas =  new LinkedList<>();
         menu = new HashMap<>();
         torneos = new HashMap<>();
-    }
+  }
+  
+  public SistemaBoardGameCafe(Map<String, Administrador> admins, Map<String, Cliente> clientes, Map<String, Empleado> empleados) {
+    this.administradores = admins;
+    this.clientes = clientes;
+    this.empleados = empleados;
+
+    this.inventario = new HashMap<>();
+    this.inventarioVender = new HashMap<>();
+    this.mesas = new HashMap<>();
+    this.turnos = new HashMap<>();
+    this.historialVenta = new HashMap<>();
+    this.historialPrestamosClientes = new HashMap<>();
+    this.historailPrestamosEmpleados = new HashMap<>();
+    this.sugerencias = new HashMap<>();
+    this.sugerenciasPendientes = new LinkedList<>();
+    this.mesasDesocupadas = new LinkedList<>();
+    this.menu = new HashMap<>();
+    this.torneos = new HashMap<>();
+  }
 	
 	public void cargarDatos() {  
 		SistemaBoardGameCafe sistema = Persistencia.cargarSistema();
@@ -442,7 +461,9 @@ public class SistemaBoardGameCafe implements Serializable {
 		Torneo  torneo = new TorneoCompetitivo(  diaSemana, participantes, 
                               juego,  numeroPartisipantes,  premio, costo,  id);
 
-		this.torneos.put(id, torneo);
+		this.torneos.put(ID, torneo);
+		// aca falta lo que les dije que no supe que hacer TODO
+
 	}
 
 	public void CrearTorneoAmistoso(String diaSemana, ArrayList<Usuario> participantes,
