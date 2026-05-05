@@ -16,7 +16,6 @@ public class PersistenciaTest {
 
 	    SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
 
-	    // Empleado para sesión
 	    Empleado emp = new Empleado("Admin", "123", 30, "admin", "123");
 
 	    try {
@@ -27,20 +26,15 @@ public class PersistenciaTest {
 
 	    sistema.inciarSesionEmpleado("admin", "123");
 
-	    // Datos básicos
 	    Cliente cliente = new Cliente("Carlos", "1010", "carlos", "300");
 	    sistema.registrarCliente(cliente);
 
 	    Mesa mesa = new Mesa("1", 4, false, new ArrayList<>(), false);
 	    sistema.getMesas().put("1", mesa);
 
-	    // Guardar
 	    Persistencia.guardarSistema(sistema);
-
-	    // Cargar
 	    SistemaBoardGameCafe cargado = Persistencia.cargarSistema();
 
-	    // Verificación
 	    Assertions.assertNotNull(cargado);
 	    Assertions.assertEquals(1, cargado.getClientes().size());
 	    Assertions.assertEquals(1, cargado.getMesas().size());
@@ -61,14 +55,14 @@ public class PersistenciaTest {
 	        }
 
 	        sistema.inciarSesionEmpleado("admin", "123");
-	        // crear cliente 
+	 
 	        Cliente cliente = new Cliente("Carlos", "1010", "carlos", "300");
 	        sistema.registrarCliente(cliente);
-	        // crear mesa
+	       
 	        Mesa mesa = new Mesa("1", 4, false, new ArrayList<>(), false);
 	        sistema.getMesas().put("1", mesa);
 	        mesa.setClienteActual(cliente);
-	        // 4. crear producto
+	        //  crear producto
 	        ArrayList<String> alergenos = new ArrayList<>();
 	        Pasteleria pastel = new Pasteleria(
 	                "Torta",
@@ -81,16 +75,8 @@ public class PersistenciaTest {
 	        sistema.agregarProductoMenu(pastel);
 	        // agregar al pedido de la mesa
 	        mesa.agregarAlPedido(pastel);
-
 	        // registrar la venta
-	        sistema.registrarVenta(
-	                1,
-	                LocalDateTime.now(),
-	                cliente,
-	                2000,
-	                new ArrayList<>(),
-	                new ArrayList<>(),
-	                false
+	        sistema.registrarVenta("1",LocalDateTime.now(),cliente,2000,new ArrayList<>(),new ArrayList<>(),false
 	        );
 	        Map<String, Venta> ventasAntes = null;
 
@@ -145,8 +131,6 @@ public class PersistenciaTest {
 	        if (archivo.exists()) {
 	            archivo.delete();
 	        }
-
-	        // ahora si se cargar
 	        SistemaBoardGameCafe sistema = Persistencia.cargarSistema();
 
 	        assertNotNull(sistema);
