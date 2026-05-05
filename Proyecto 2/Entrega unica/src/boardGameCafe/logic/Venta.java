@@ -7,7 +7,6 @@ public class Venta implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String idVenta;
 	private LocalDateTime fecha;
-	//private Cliente cliente;
 	private Usuario comprador;
 	private ArrayList<ProductoMenu> itemsVendidos ;
 	private ArrayList<JuegoMesa> juegosVendidos;
@@ -22,9 +21,6 @@ public class Venta implements Serializable {
         this.idVenta = id;
         this.fecha = fecha; 
         this.comprador = comprador;
-        //this.cliente = cliente;
-        
-
         this.itemsVendidos = new ArrayList<>();
         this.juegosVendidos = new ArrayList<>();
         
@@ -97,10 +93,6 @@ public class Venta implements Serializable {
 	public LocalDateTime getFecha() {
 		return fecha;
 	}
-
-	//public Cliente getCliente() {
-		//return cliente;
-	//}
 	
 	public Usuario getComprador() {
 	    return comprador;

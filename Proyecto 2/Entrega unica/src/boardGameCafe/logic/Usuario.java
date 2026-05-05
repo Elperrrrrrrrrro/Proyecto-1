@@ -30,5 +30,6 @@ public String getLogin() {
 
 public String getPassword() {
 	return Password;
+	}
 }
-}
+

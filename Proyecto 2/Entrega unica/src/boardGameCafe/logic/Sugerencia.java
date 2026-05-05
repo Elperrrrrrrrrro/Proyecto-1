@@ -12,7 +12,7 @@ public class Sugerencia implements Serializable {
     private Empleado empleado;
     private ProductoMenu productoMenu;
 
-    // --- CONSTRUCTOR ---
+    // Constructor
     public Sugerencia(String sugerenciaID, boolean estaAprobado, boolean tipoSugerencia, String diaCambio, 
             Empleado empleado, ProductoMenu productoMenu) {
     	this.sugerenciaID = sugerenciaID;

@@ -33,3 +33,4 @@ public String getDescripcion() {
 public abstract boolean esApto(Mesa mesa);
 
 }
+

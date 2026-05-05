@@ -12,8 +12,6 @@ public class Bebida extends ProductoMenu implements Serializable{
 		
 	}	
 	
-	
-	
 	public boolean esApto(Mesa mesa) {
 			if (mesa.isHayMenores() && this.esAlcoholica) {
 				return false;
@@ -23,11 +21,10 @@ public class Bebida extends ProductoMenu implements Serializable{
 				for (Prestamo i : mesa.getPrestamoActicos()) {
 					if ( "Accion".equals(i.getJuego().getCategoria())){
 						return false;
-					}
-					
+					}		
 				}
-			}
-			
+			}	
 			return true;
 	}
 }
+
