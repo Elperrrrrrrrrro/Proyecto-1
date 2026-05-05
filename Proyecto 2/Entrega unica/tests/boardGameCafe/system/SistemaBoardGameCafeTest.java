@@ -38,10 +38,16 @@ public class SistemaBoardGameCafeTest {
     @Test
     public void testVerificarSesionConUsuario() {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
-        // Corrección del constructor: (nombre, documento, edad, login, password)
-        boardGameCafe.logic.Empleado emp = new boardGameCafe.logic.Empleado("Admin", "123", 30, "admin", "123");
-        sistema.agregarEmpleadoPrueba(emp);
-        sistema.inciarSesion("admin", "123");
+        // Usamos Administrador para reflejar la nueva lógica de tipos de sesión
+        Administrador admin = new Administrador("Admin", "123", "admin", "123");
+        // Agregamos el administrador al mapa directamente para evitar la restricción de verificarSesion al inicio
+        try {
+            java.lang.reflect.Field field = sistema.getClass().getDeclaredField("administradores");
+            field.setAccessible(true);
+            ((Map<String, Administrador>) field.get(sistema)).put("admin123", admin);
+        } catch (Exception e) { e.printStackTrace(); }
+
+        sistema.iniciarSesionAdministrador("admin", "123");
         // No debería lanzar excepción si la sesión es válida
         Assertions.assertDoesNotThrow(() -> {
             sistema.registrarCliente(new boardGameCafe.logic.Cliente("Juan", "123", "juan@mail.com", "555"));
@@ -53,26 +59,30 @@ public class SistemaBoardGameCafeTest {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         
         // Configuración inicial: Empleado, Cliente, Juego y Mesa
-        // Corrección: (nombre, documento, edad, login, password)
         Empleado emp = new Empleado("Admin", "123", 30, "admin", "123");
         
-        // Inyectamos el empleado para poder operar
-        sistema.agregarEmpleadoPrueba(emp);
-        sistema.inciarSesion("admin", "123");
+        // Inyectamos el empleado al sistema
+        try {
+            java.lang.reflect.Field field = sistema.getClass().getDeclaredField("empleados");
+            field.setAccessible(true);
+            ((Map<String, Empleado>) field.get(sistema)).put("admin123", emp);
+        } catch (Exception e) { e.printStackTrace(); }
+        
+        sistema.inciarSesionEmpleado("admin", "123");
         
         Cliente cliente = new Cliente("Carlos", "1010", "carlos@mail.com", "300");
+        sistema.registrarCliente(cliente); // Registrar cliente en el mapa
         
         // Corrección JuegoMesa: (id, nombre, ano, empresa, minJug, maxJug, categoria, soloAdultos, estado, dificil, precio)
         JuegoMesa juego = new JuegoMesa("J001", "Catan", 1995, "KOSMOS", 2, 4, "Estrategia", false, "Bueno", false, 50.0);
+        sistema.getInventario().put(juego.getId(), juego); // Agregar juego al inventario
         
-        // Corrección Mesa: (numero, capacidad, menores, alergenos, infantes)
-        Mesa mesa = new Mesa(1, 4, false, new ArrayList<>(), false);
+        Mesa mesa = new Mesa("1", 4, false, new ArrayList<>(), false);
+        sistema.getMesas().put("1", mesa); // Agregar mesa con ID String
         
-        // Nota: Debido a verificarSesion(), el setup de estos objetos en el sistema 
-        // podría requerir inicializar los mapas internos directamente en un entorno de test.
-
         // Ejecución del préstamo
-        boolean resultado = sistema.procesarPrestamo("J001", 1, true, cliente, null, juego, LocalDateTime.now());
+        // Se cambia el ID de la mesa a String "1"
+        boolean resultado = sistema.procesarPrestamo("J001", "1", true, cliente, null, juego, LocalDateTime.now());
         
         // Verificaciones
         Assertions.assertTrue(resultado, "El préstamo debería procesarse exitosamente.");
@@ -80,7 +90,7 @@ public class SistemaBoardGameCafeTest {
         Assertions.assertEquals(1, juego.getVecesPrestado(), "El contador de veces prestado debería aumentar.");
         
         // Intento de préstamo del mismo juego (ya prestado)
-        boolean resultadoFallido = sistema.procesarPrestamo("J001", 1, true, cliente, null, juego, LocalDateTime.now());
+        boolean resultadoFallido = sistema.procesarPrestamo("J001", "1", true, cliente, null, juego, LocalDateTime.now());
         Assertions.assertFalse(resultadoFallido, "No debería permitirse prestar un juego que ya está prestado.");
     }
 
@@ -91,13 +101,18 @@ public class SistemaBoardGameCafeTest {
         // Simulamos un inicio de sesión para cumplir con verificarSesion()
         // Constructor Empleado: (nombre, documento, edad, login, password)
         Empleado emp = new Empleado("Admin", "123", 30, "admin", "123");
-        sistema.agregarEmpleadoPrueba(emp);
-        sistema.inciarSesion("admin", "123");
+        try {
+            java.lang.reflect.Field field = sistema.getClass().getDeclaredField("empleados");
+            field.setAccessible(true);
+            ((Map<String, Empleado>) field.get(sistema)).put("admin123", emp);
+        } catch (Exception e) { e.printStackTrace(); }
+        sistema.inciarSesionEmpleado("admin", "123");
 
         // Configuración de una mesa ocupada con un préstamo activo
         ArrayList<String> alergenos = new ArrayList<>();
         // Constructor Mesa: (numero, capacidad, menores, alergenos, infantes)
-        Mesa mesa = new Mesa(1, 4, false, alergenos, false);
+        Mesa mesa = new Mesa("1", 4, false, alergenos, false);
+        sistema.getMesas().put("1", mesa); // Registro en el sistema
         Cliente cliente = new Cliente("Carlos", "1010", "carlos", "pass");
         mesa.setClienteActual(cliente);
         mesa.setCantidadPersonas(2);
@@ -105,7 +120,9 @@ public class SistemaBoardGameCafeTest {
         // Creamos un juego y lo asignamos como prestado en la mesa
         JuegoMesa juego = new JuegoMesa("J001", "Catan", 1995, "KOSMOS", 2, 4, "Estrategia", false, "Bueno", false, 50.0);
         juego.setPrestado(true);
+        sistema.getInventario().put("J001", juego); // Registro en el sistema
         PrestamoCliente prestamo = new PrestamoCliente("P001", juego, LocalDateTime.now(), null, cliente);
+        sistema.agregarPrestamoCliente(prestamo); // Registro en el sistema
         mesa.AgregarPrestamo(prestamo);
 
         // Acción: Limpiar la mesa
@@ -113,7 +130,7 @@ public class SistemaBoardGameCafeTest {
 
         // Verificaciones
         Assertions.assertNull(mesa.getClienteActual(), "El cliente debería ser nulo tras limpiar.");
-        Assertions.assertEquals(0, mesa.getCantidadPersonas(), "La cantidad de personas debería reiniciarse a 0.");
+        Assertions.assertEquals(0, mesa.getCantidadPersonas(), "La cantidad de personas debería rese a 0.");
         Assertions.assertTrue(mesa.getPrestamoActicos().isEmpty(), "La lista de préstamos activos de la mesa debe quedar vacía.");
         Assertions.assertFalse(juego.isPrestado(), "El juego debe volver a estar marcado como no prestado.");
         Assertions.assertNotNull(prestamo.getFechaDevolucion(), "El préstamo debe tener registrada su fecha de devolución.");
@@ -140,16 +157,50 @@ public class SistemaBoardGameCafeTest {
         @SuppressWarnings("unchecked")
         Map<String, Turno> turnos = (Map<String, Turno>) fieldTurnos.get(sistema);
 
+        // Inyectamos la cola de sugerencias pendientes, ya que el método aprobarCambioTurno la manipula
+        java.lang.reflect.Field fieldSugerenciasPendientes = sistema.getClass().getDeclaredField("sugerenciasPendientes");
+        fieldSugerenciasPendientes.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Queue<Sugerencia> sugerenciasPendientes = (Queue<Sugerencia>) fieldSugerenciasPendientes.get(sistema);
+
         // Configuración de datos de prueba
         Empleado emp = new Empleado("Juan", "101", 25, "juan", "123");
         String keyEmpleado = "juan123"; // La llave es login + password según SistemaBoardGameCafe.java:189
         empleados.put(keyEmpleado, emp);
         
-        Turno lunes = new Turno("Lunes");
-        turnos.put("Lunes", lunes);
+        // Creamos un turno de origen para el empleado y lo asignamos
+        Turno turnoOrigen = new Turno("Martes");
+        turnoOrigen.adicionarEmpleado(emp);
+        
+        // Agregamos los empleados necesarios para el mínimo operativo (2 meseros, 1 cocinero)
+        // Se agregan tanto al mapa global de empleados como al turno específico
+        Mesero mesero1 = new Mesero("Mesero 1", "102", 20, "m1", "p1", new ArrayList<>());
+        Mesero mesero2 = new Mesero("Mesero 2", "103", 21, "m2", "p2", new ArrayList<>());
+        Cocinero cocinero = new Cocinero("Cocinero", "104", 30, "c1", "p3");
+
+        // Asegurarse de que los empleados estén en el mapa de empleados del sistema
+        // para que puedan ser encontrados por el método verTurnosEmpleado o similares.
+        // La clave es login+password
+        empleados.put(emp.getLogin() + emp.getPassword(), emp); // El empleado que solicita el cambio
+        empleados.put("m1p1", mesero1);
+        empleados.put("m2p2", mesero2);
+        empleados.put("c1p3", cocinero);
+
+        // El empleado que solicita el cambio también debe estar en el turno origen
+        turnoOrigen.adicionarEmpleado(emp);
+        turnoOrigen.adicionarEmpleado(mesero1);
+        turnoOrigen.adicionarEmpleado(mesero2);
+        turnoOrigen.adicionarEmpleado(cocinero);
+
+        turnos.put("Martes", turnoOrigen);
+
+        // Creamos el turno de destino
+        Turno turnoDestino = new Turno("Lunes");
+        turnos.put("Lunes", turnoDestino);
 
         // Creamos una sugerencia de tipo turno (false)
-        Sugerencia sugerencia = new Sugerencia("S001", false, false, "Lunes", emp, null);
+        Sugerencia sugerencia = new Sugerencia("S001", false, false, "Lunes", emp, null); // Sugerencia para cambiar al Lunes
+        sugerenciasPendientes.offer(sugerencia); // Agregamos la sugerencia a la cola de pendientes
 
         // Ejecución
         boolean resultado = sistema.aprobarCambioTurno(keyEmpleado, sugerencia);
@@ -157,7 +208,15 @@ public class SistemaBoardGameCafeTest {
         // Verificaciones
         Assertions.assertTrue(resultado, "El método debería retornar true al ser exitoso.");
         Assertions.assertTrue(sugerencia.isEstaAprobado(), "La sugerencia debería marcarse como aprobada.");
-        Assertions.assertTrue(lunes.getEmpleadosAsignados().contains(emp), "El empleado debería haber sido añadido al turno.");
+        Assertions.assertFalse(turnoOrigen.getEmpleadosAsignados().contains(emp), "El empleado debería haber sido removido del turno original (Martes).");
+        Assertions.assertTrue(turnoDestino.getEmpleadosAsignados().contains(emp), "El empleado debería haber sido añadido al turno de destino (Lunes).");
+        Assertions.assertFalse(sugerenciasPendientes.contains(sugerencia), "La sugerencia debería ser removida de las pendientes.");
+        // Verificamos que la sugerencia aprobada esté en el mapa de sugerencias
+        java.lang.reflect.Field fieldSugerencias = sistema.getClass().getDeclaredField("sugerencias");
+        fieldSugerencias.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        Map<String, Sugerencia> sugerenciasAprobadas = (Map<String, Sugerencia>) fieldSugerencias.get(sistema);
+        Assertions.assertTrue(sugerenciasAprobadas.containsKey("S001"), "La sugerencia debería estar en el mapa de sugerencias aprobadas.");
     }
 
     @Test
@@ -218,7 +277,7 @@ public class SistemaBoardGameCafeTest {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         setAdminSession(sistema);
 
-        Mesa mesa = new Mesa(1, 4, false, new ArrayList<>(), false);
+        Mesa mesa = new Mesa("1", 4, false, new ArrayList<String>(), false);
         sistema.agregarMesa(mesa); // Esto la mete en el mapa con llave "1"
 
         ProductoMenu bebida = new Bebida("Jugo", "B01", false, false, 5.0, "IT01", "Jugo natural");
@@ -234,7 +293,7 @@ public class SistemaBoardGameCafeTest {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         setAdminSession(sistema);
 
-        Mesa mesa = new Mesa(1, 4, false, new ArrayList<>(), false);
+        Mesa mesa = new Mesa("1", 4, false, new ArrayList<String>(), false);
         sistema.agregarMesa(mesa); // Al agregarla, se hace push a mesasDesocupadas
 
         Cliente cliente = new Cliente("Luis", "3030", "luis", "123");
@@ -279,7 +338,7 @@ public class SistemaBoardGameCafeTest {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         setAdminSession(sistema);
 
-        Mesa mesa = new Mesa(5, 6, true, new ArrayList<>(), true);
+        Mesa mesa = new Mesa("5", 6, true, new ArrayList<String>(), true);
         sistema.agregarMesa(mesa);
 
         Assertions.assertTrue(sistema.getMesas().containsKey("1"));
@@ -330,11 +389,13 @@ public class SistemaBoardGameCafeTest {
     public void testAgregarSugerencia() throws Exception {
         SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
         setAdminSession(sistema);
-
-        Sugerencia sug = new Sugerencia("S1", false, true, "Lunes", null, null);
+        ProductoMenu pastel = new Pasteleria("Torta", "P01", 10.0, "C01", "Torta chocolate", new ArrayList<>());
+        sistema.agregarProductoMenu(pastel); // Registro en el sistema
+        
+        Sugerencia sug = new Sugerencia("S1", false, true, "Lunes", null, pastel);
         sistema.agregarSugerencia(sug);
 
-        java.lang.reflect.Field field = sistema.getClass().getDeclaredField("Sugerencias");
+        java.lang.reflect.Field field = sistema.getClass().getDeclaredField("sugerencias");
         field.setAccessible(true);
         Assertions.assertTrue(((Map)field.get(sistema)).containsKey("S1"));
     }

@@ -208,7 +208,7 @@ public class SistemaBoardGameCafe implements Serializable {
 		
 	}
 	
-	public void registrarVenta(Integer idMesa, LocalDateTime fecha, Usuario comprador, double propina,
+	public void registrarVenta(String idMesa, LocalDateTime fecha, Usuario comprador, double propina,
 	        ArrayList<ProductoMenu> productosExtras,
 	        ArrayList<JuegoMesa> juegosComprados,
 	        boolean descuentoCompartido) {
@@ -223,7 +223,7 @@ public class SistemaBoardGameCafe implements Serializable {
 	        if (idMesa == null) {
 	            throw new IllegalArgumentException("El cliente necesita una mesa.");
 	        }
-	        mesa = this.mesas.get(String.valueOf(idMesa));
+	        mesa = this.mesas.get(idMesa);
 	        if (mesa == null) {
 	            throw new IllegalArgumentException("La mesa no existe.");
 	        }
