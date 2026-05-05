@@ -152,6 +152,7 @@ public class PersistenciaTest {
 	        assertNotNull(sistema);
 	        assertEquals(0, sistema.getClientes().size());
 	    }
+	 
 	    @Test
 	    public void testIntegridadDatos() {
 

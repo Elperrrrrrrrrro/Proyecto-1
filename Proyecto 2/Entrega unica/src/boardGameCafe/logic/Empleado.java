@@ -17,5 +17,4 @@ public class Empleado extends Usuario   implements  Serializable{
 	public boolean puedeComprar(boolean enTurno, boolean hayClientes) {
 		return !enTurno || !hayClientes;
 	}
-
 }
