@@ -97,8 +97,5 @@ public class Mesa implements Serializable{
 	public void AgregarPrestamo(Prestamo prestamo) {
 		this.prestamosActivos.add(prestamo);
 	}
-	
-
-	
-	
+		
 }

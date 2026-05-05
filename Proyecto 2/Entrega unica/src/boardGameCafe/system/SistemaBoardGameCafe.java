@@ -461,7 +461,7 @@ public class SistemaBoardGameCafe implements Serializable {
 		Torneo  torneo = new TorneoCompetitivo(  diaSemana, participantes, 
                               juego,  numeroPartisipantes,  premio, costo,  id);
 
-		this.torneos.put(ID, torneo);
+		this.torneos.put(id, torneo);
 		// aca falta lo que les dije que no supe que hacer TODO
 
 	}
