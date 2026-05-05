@@ -10,13 +10,13 @@ import boardGameCafe.ui.ConsolaEmpleado;
 
 public class Main {
     public static void main(String[] args) {
-    	SistemaBoardGameCafe sistema = cargarSistema();
-    	ConsolaAdministrador consolaAdministrador = new ConsolaAdministrador(sistema);
-    	ConsolaCliente consolaCliente = new ConsolaCliente(sistema);
-    	ConsolaEmpleado consolaEmpleado = new ConsolaEmpleado(sistema);
+		SistemaBoardGameCafe sistema = cargarSistema();
+		ConsolaAdministrador consolaAdministrador = new ConsolaAdministrador(sistema);
+		ConsolaCliente consolaCliente = new ConsolaCliente(sistema);
+		ConsolaEmpleado consolaEmpleado = new ConsolaEmpleado(sistema);
 
-    	mostrarMenuTipoUsuario(consolaAdministrador, consolaCliente, consolaEmpleado);
-    }
+		mostrarMenuTipoUsuario(consolaAdministrador, consolaCliente, consolaEmpleado, sistema);
+	}
 
     private static SistemaBoardGameCafe cargarSistema() {
     	SistemaBoardGameCafe sistema = new SistemaBoardGameCafe();
@@ -26,7 +26,6 @@ public class Main {
     	if (sistema.getAdministradores().isEmpty()) {
 			Administrador adminInicial = crearAdminInicial();
 			sistema.registrarAdministrador(adminInicial);
-			sistema.guardarDatos();
 			mostrarCredencialesIniciales(adminInicial);
 		}
     	
@@ -49,7 +48,8 @@ public class Main {
     private static void mostrarMenuTipoUsuario(
     			ConsolaAdministrador consolaAdministrador,
     			ConsolaCliente consolaCliente,
-    			ConsolaEmpleado consolaEmpleado) {
+    			ConsolaEmpleado consolaEmpleado,
+			SistemaBoardGameCafe sistema) {
     	Scanner scanner = new Scanner(System.in);
     	
     	
@@ -83,6 +83,7 @@ public class Main {
     		}
     	}
 
+    	sistema.guardarDatos();
     	scanner.close();
     }
 }

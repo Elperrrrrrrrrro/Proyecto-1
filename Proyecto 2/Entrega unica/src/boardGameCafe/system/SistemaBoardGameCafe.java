@@ -100,6 +100,14 @@ public class SistemaBoardGameCafe implements Serializable {
 	public Map<String, Administrador> getAdministradores() {
 	    return administradores;
 	}
+
+	public Map<String, Cliente> getClientes() {
+		return clientes;
+	}
+
+	public Map<String, Empleado> getEmpleados() {
+		return empleados;
+	}
 	
 	public void guardarDatos() { 
 		Persistencia.guardarSistema(this); 	
@@ -213,6 +221,15 @@ public class SistemaBoardGameCafe implements Serializable {
 	        ArrayList<JuegoMesa> juegosComprados,
 	        boolean descuentoCompartido) {
 
+	    registrarVenta(idMesa, fecha, comprador, propina, productosExtras, juegosComprados, descuentoCompartido, true);
+	}
+
+	public void registrarVenta(Integer idMesa, LocalDateTime fecha, Usuario comprador, double propina,
+	        ArrayList<ProductoMenu> productosExtras,
+	        ArrayList<JuegoMesa> juegosComprados,
+	        boolean descuentoCompartido,
+	        boolean usarPuntos) {
+
 	    verificarSesion();
 
 	    String id = String.valueOf(this.historialVenta.size() + 1);
@@ -271,12 +288,15 @@ public class SistemaBoardGameCafe implements Serializable {
 	        total *= 0.90;
 	    }
 	    //puntos de fidelifad
-	    if (comprador instanceof Cliente) {
+	    if (comprador instanceof Cliente && usarPuntos) {
 	        Cliente c = (Cliente) comprador;
 	        double descuento = c.usarPuntosFidelidad(total);
 	        total -= descuento;
 	        
 	        c.agregarPuntosFidelidad(total * 0.01);
+	    } else if (comprador instanceof Cliente) {
+	    	Cliente c = (Cliente) comprador;
+	    	c.agregarPuntosFidelidad(total * 0.01);
 	    }
 	    venta.setTotal(total);
 	    this.historialVenta.put(id, venta);
@@ -377,18 +397,53 @@ public class SistemaBoardGameCafe implements Serializable {
 		verificarSesion();
 		this.mesas.get(idMesa).agregarAlPedido(this.menu.get(nombrePlato));
 	}
-	public Map<String, Cliente> getClientes() {
-	    return clientes;
-	}
-
 	public Map<String, JuegoMesa> getInventario() {
 	    return inventario;
+	}
+
+	public Map<String, JuegoMesa> getInventarioVender() {
+		return inventarioVender;
 	}
 
 	public Map<String, Mesa> getMesas() {
 	    return mesas;
 	}
 
+	public Map<String, Turno> getTurnos() {
+		return turnos;
+	}
+
+	public Map<String, ProductoMenu> getMenu() {
+		return menu;
+	}
+
+	public Map<String, Torneo> getTorneos() {
+		return torneos;
+	}
+
+	public Map<String, Venta> getHistorialVenta() {
+		return historialVenta;
+	}
+
+	public Map<String, PrestamoCliente> getHistorialPrestamosClientes() {
+		return historialPrestamosClientes;
+	}
+
+	public Map<String, PrestamoEmpleado> getHistorialPrestamosEmpleados() {
+		return historailPrestamosEmpleados;
+	}
+
+	public Map<String, Sugerencia> getSugerencias() {
+		return sugerencias;
+	}
+
+	public Queue<Sugerencia> getSugerenciasPendientes() {
+		return sugerenciasPendientes;
+	}
+
+	public Queue<Mesa> getMesasDesocupadas() {
+		return mesasDesocupadas;
+	}
 	public void asignarMesa(Cliente cliente) {
 		verificarSesion();
 		Mesa mesa = this.mesasDesocupadas.poll();
@@ -516,6 +571,23 @@ public class SistemaBoardGameCafe implements Serializable {
 		return true;
 	}
 
+	public boolean inscribirseTorneoCliente(String idTorneo, String documento) {
+		verificarSesion();
+		Torneo torneo = this.torneos.get(idTorneo);
+		Cliente cliente = this.clientes.get(documento);
+		if (torneo == null || cliente == null) {
+			return false;
+		}
+		if (torneo.getParticipantes().contains(cliente)) {
+			return false;
+		}
+		if (torneo.getParticipantes().size() >= torneo.getNumeroPartisipantes()) {
+			return false;
+		}
+		torneo.agregarParticipante(cliente);
+		return true;
+	}
+
 	public void DesiscribirUsuario(Usuario usuario , Torneo torneo){
 		torneo.getParticipantes().remove(usuario);
 	}
@@ -535,19 +607,17 @@ public class SistemaBoardGameCafe implements Serializable {
 	    return turnosEmpleado;
 	}
 
-	public boolean sugerirPlatillo(String idEmpleado, String nombreProducto) {
+	public boolean sugerirPlatillo(String idEmpleado, ProductoMenu producto) {
 	    verificarSesion();
 	    Empleado empleado = this.empleados.get(idEmpleado);
 	    if (empleado == null) {
 	        throw new IllegalArgumentException("Empleado no existe.");
 	    }
-	    ProductoMenu producto = this.menu.get(nombreProducto);
 	    if (producto == null) {
-	        throw new IllegalArgumentException("El producto no existe en el sistema.");
-	    } 
+	        throw new IllegalArgumentException("El producto no puede ser nulo.");
+	    }
 	    String id = String.valueOf(this.sugerencias.size() + 1);
-	    Sugerencia sugerencia = new Sugerencia( id,false,true,null, empleado, producto    		
-	    		);
+	    Sugerencia sugerencia = new Sugerencia(id, false, true, null, empleado, producto);
 	    this.sugerenciasPendientes.offer(sugerencia);
 	    return true;
 	}
