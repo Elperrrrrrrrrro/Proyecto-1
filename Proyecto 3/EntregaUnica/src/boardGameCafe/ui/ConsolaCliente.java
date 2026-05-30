@@ -268,9 +268,9 @@ public class ConsolaCliente extends ConsolaUsuario {
 		Cliente cliente = sistema.getClientes().get(documentoCliente);
 		boolean usarPuntos = usarPuntosEnCompra;
 		usarPuntosEnCompra = false;
-		Integer idMesa = null;
+		String idMesa = null;
 		try {
-			idMesa = Integer.valueOf(mesa.getIdMesa());
+			idMesa = String.valueOf(mesa.getIdMesa());
 		} catch (NumberFormatException e) {
 			System.out.println("Id de mesa invalido para la venta.");
 			return;

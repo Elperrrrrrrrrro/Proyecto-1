@@ -76,8 +76,7 @@ public class PersistenciaTest {
 	        // agregar al pedido de la mesa
 	        mesa.agregarAlPedido(pastel);
 	        // registrar la venta
-	        sistema.registrarVenta("1",LocalDateTime.now(),cliente,2000,new ArrayList<>(),new ArrayList<>(),false
-	        );
+	        sistema.registrarVenta("1",LocalDateTime.now(),cliente,2000,new ArrayList<>(),new ArrayList<>(),false,false);
 	        Map<String, Venta> ventasAntes = null;
 
 	        try {
