@@ -5,16 +5,6 @@ import javax.swing.*;
 import boardGameCafe.logic.*;
 import boardGameCafe.system.SistemaBoardGameCafe;
 
-/**
- * Panel de Visualizaciones.
- *
- * Muestra tres gráficas usando JFreeChart si la librería está disponible.
- * Si JFreeChart no está en el classpath, muestra un panel de texto con
- * los datos en forma de tabla, para que el proyecto compile siempre.
- *
- * Para activar las gráficas reales, agrega jfreechart-1.x.x.jar al
- * classpath del proyecto.
- */
 public class PanelVisualizaciones extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -35,7 +25,7 @@ public class PanelVisualizaciones extends JPanel {
         titulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         add(titulo, BorderLayout.NORTH);
 
-        // Intentar usar JFreeChart; si no está disponible, fallback a texto
+        // Intenta usar JFreeChart si no puede hace texto
         boolean jfreeDisponible = false;
         try {
             Class.forName("org.jfree.chart.JFreeChart");
@@ -49,16 +39,12 @@ public class PanelVisualizaciones extends JPanel {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Panel con JFreeChart (solo se accede mediante reflexión para evitar
-    // errores de compilación cuando la librería no está presente)
-    // ─────────────────────────────────────────────────────────────────
     private JPanel panelConGraficas() {
         JPanel panel = new JPanel(new GridLayout(2, 2, 16, 16));
         panel.setOpaque(false);
 
         try {
-            // ── Pie Chart: Distribución préstamo vs venta ─────────────
+            // Pie Chart Distribución préstamo vs venta 
             Class<?> defaultPieDataset = Class.forName("org.jfree.data.general.DefaultPieDataset");
             Object pieDs = defaultPieDataset.getDeclaredConstructor().newInstance();
             defaultPieDataset.getMethod("setValue", Comparable.class, Number.class)
@@ -77,7 +63,7 @@ public class PanelVisualizaciones extends JPanel {
             panel.add((JPanel) chartPanel.getDeclaredConstructor(
                     Class.forName("org.jfree.chart.JFreeChart")).newInstance(pieChart));
 
-            // ── Bar Chart: ventas por día (últimos 5 días) ────────────
+            //  Bar Chart ventas por día (últimos 5 días) 
             Class<?> defCatDs = Class.forName("org.jfree.data.category.DefaultCategoryDataset");
             Object barDs = defCatDs.getDeclaredConstructor().newInstance();
 
@@ -114,7 +100,7 @@ public class PanelVisualizaciones extends JPanel {
             panel.add((JPanel) chartPanel.getDeclaredConstructor(
                     Class.forName("org.jfree.chart.JFreeChart")).newInstance(barChart));
 
-            // ── Line Chart: reservas (préstamos) por día ──────────────
+            //  Line Chart reservas (préstamos) por día 
             Object lineDs = defCatDs.getDeclaredConstructor().newInstance();
             for (int d = 6; d >= 0; d--) {
                 java.time.LocalDate dia = hoy.minusDays(d);
@@ -141,8 +127,7 @@ public class PanelVisualizaciones extends JPanel {
 
             panel.add((JPanel) chartPanel.getDeclaredConstructor(
                     Class.forName("org.jfree.chart.JFreeChart")).newInstance(lineChart));
-
-            // Espacio en blanco para la 4ª celda
+            
             panel.add(new JPanel());
 
         } catch (Exception ex) {
@@ -152,9 +137,7 @@ public class PanelVisualizaciones extends JPanel {
         return panel;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Fallback: resumen en texto cuando JFreeChart no está disponible
-    // ─────────────────────────────────────────────────────────────────
+    // en texto por si la libreria no esta disponible
     private JPanel panelFallbackTexto() {
         JPanel p = new JPanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
