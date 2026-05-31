@@ -110,11 +110,17 @@ public class DialogoLogin extends JPanel {
         });
 
         // Enter también hace login
-        getRootPane().setDefaultButton(btnIngresar);
         if (fPassword != null) {
             fPassword.addActionListener(e -> intentarLogin());
         }
         fUsuario.addActionListener(e -> intentarLogin());
+
+        SwingUtilities.invokeLater(() -> {
+            JRootPane root = SwingUtilities.getRootPane(this);
+            if (root != null) {
+                root.setDefaultButton(btnIngresar);
+            }
+        });
 
         gbc.gridx = 0; tarjeta.add(btnIngresar, gbc);
         gbc.gridx = 1; tarjeta.add(btnCancelar, gbc);
