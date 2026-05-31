@@ -192,6 +192,8 @@ public class PanelInventario extends JPanel {
             BorderFactory.createEmptyBorder(6, 14, 6, 14)));
         b.setFocusPainted(false);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setOpaque(true);
+        b.setContentAreaFilled(true);
         return b;
     }
 

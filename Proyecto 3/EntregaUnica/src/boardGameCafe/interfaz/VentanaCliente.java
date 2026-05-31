@@ -2,36 +2,35 @@ package boardGameCafe.interfaz;
 
 import java.awt.*;
 import javax.swing.*;
+import boardGameCafe.logic.Cliente;
 import boardGameCafe.system.SistemaBoardGameCafe;
 
-public class VentanaAdministrador extends JFrame {
+public class VentanaCliente extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private CardLayout cardLayout;
-    private JPanel panelContenido;
-    private JLabel labelRuta;
     private SistemaBoardGameCafe sistema;
+    private VentanaPrincipal     ventanaPrincipal;
+    private Cliente              clienteActual;
 
-    private PanelDashboard panelDashboard;
-    private PanelUsuarios panelUsuarios;
-    private PanelInventario panelInventario;
-    private PanelTurnos panelTurnos;
-    private PanelVisualizaciones panelVisualizaciones;
-    private PanelInformes panelInformes;
+    private CardLayout cardLayout;
+    private JPanel     panelContenido;
+    private JLabel     labelRuta;
 
-    public VentanaAdministrador(SistemaBoardGameCafe sistema) {
-        this.sistema = sistema;
+    private PanelPerfil       panelPerfil;
+    private PanelJuegos       panelJuegos;
+    private PanelMenuCliente  panelMenu;
+
+    public VentanaCliente(SistemaBoardGameCafe sistema, VentanaPrincipal ventanaPrincipal) {
+        this.sistema          = sistema;
+        this.ventanaPrincipal = ventanaPrincipal;
+        this.clienteActual    = resolverClienteActual();
         inicializarUI();
     }
 
-    public VentanaAdministrador() {
-        this(new SistemaBoardGameCafe());
-    }
-
     private void inicializarUI() {
-        setTitle("Board Game Café — Sistema de Gestión");
-        setSize(1200, 700);
+        setTitle("Board Game Café — Cliente");
+        setSize(1050, 640);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -41,7 +40,8 @@ public class VentanaAdministrador extends JFrame {
                 BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(220, 220, 230)),
                 BorderFactory.createEmptyBorder(6, 16, 6, 16)));
 
-        JLabel titulo = new JLabel("Board Game Café — Sistema de Gestión");
+        String nombreCliente = clienteActual != null ? clienteActual.getNombre() : "Cliente";
+        JLabel titulo = new JLabel("Board Game Café — Bienvenido, " + nombreCliente);
         titulo.setFont(new Font("Serif", Font.PLAIN, 14));
         titulo.setForeground(new Color(60, 60, 80));
 
@@ -51,10 +51,10 @@ public class VentanaAdministrador extends JFrame {
         semaforo.add(circulo(new Color(255, 190, 50)));
         semaforo.add(circulo(new Color(60, 200, 100)));
 
-        barraTop.add(titulo, BorderLayout.WEST);
+        barraTop.add(titulo,   BorderLayout.WEST);
         barraTop.add(semaforo, BorderLayout.EAST);
 
-        labelRuta = new JLabel("Admin → Dashboard");
+        labelRuta = new JLabel("Cliente → Mi perfil");
         labelRuta.setFont(new Font("SansSerif", Font.PLAIN, 12));
         labelRuta.setForeground(new Color(100, 100, 130));
         labelRuta.setBorder(BorderFactory.createEmptyBorder(4, 16, 4, 16));
@@ -63,37 +63,32 @@ public class VentanaAdministrador extends JFrame {
 
         JPanel cabecera = new JPanel(new BorderLayout());
         cabecera.setBackground(new Color(250, 250, 255));
-        cabecera.add(barraTop, BorderLayout.NORTH);
+        cabecera.add(barraTop,  BorderLayout.NORTH);
         cabecera.add(labelRuta, BorderLayout.SOUTH);
 
-        JPanel sidebar = construirSidebar();
-
-        cardLayout = new CardLayout();
+        cardLayout     = new CardLayout();
         panelContenido = new JPanel(cardLayout);
         panelContenido.setBackground(Color.WHITE);
 
-        panelDashboard     = new PanelDashboard(this, sistema);
-        panelUsuarios      = new PanelUsuarios(sistema);
-        panelInventario    = new PanelInventario(sistema);
-        panelTurnos        = new PanelTurnos(sistema);
-        panelVisualizaciones = new PanelVisualizaciones(sistema);
-        panelInformes      = new PanelInformes(sistema);
+        panelPerfil = new PanelPerfil(sistema, clienteActual);
+        panelJuegos = new PanelJuegos(sistema, clienteActual);
+        panelMenu   = new PanelMenuCliente(sistema, clienteActual);
 
-        panelContenido.add(panelDashboard,      "DASHBOARD");
-        panelContenido.add(panelUsuarios,       "USUARIOS");
-        panelContenido.add(panelInventario,     "INVENTARIO");
-        panelContenido.add(panelTurnos,         "TURNOS");
-        panelContenido.add(panelVisualizaciones,"VISUAL");
-        panelContenido.add(panelInformes,       "INFORMES");
+        panelContenido.add(panelPerfil, "PERFIL");
+        panelContenido.add(panelJuegos, "JUEGOS");
+        panelContenido.add(panelMenu,   "MENU");
 
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, panelContenido);
+        JSplitPane split = new JSplitPane(
+                JSplitPane.HORIZONTAL_SPLIT, construirSidebar(), panelContenido);
         split.setDividerLocation(200);
         split.setDividerSize(1);
         split.setBorder(null);
 
         setLayout(new BorderLayout());
         add(cabecera, BorderLayout.NORTH);
-        add(split, BorderLayout.CENTER);
+        add(split,    BorderLayout.CENTER);
+
+        mostrarPanel("PERFIL");
     }
 
     private JPanel construirSidebar() {
@@ -102,19 +97,15 @@ public class VentanaAdministrador extends JFrame {
         sidebar.setPreferredSize(new Dimension(200, 0));
         sidebar.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(220, 220, 235)));
 
-
-        JLabel seccion = new JLabel("ADMINISTRADOR");
+        JLabel seccion = new JLabel("CLIENTE");
         seccion.setFont(new Font("SansSerif", Font.BOLD, 10));
         seccion.setForeground(new Color(150, 150, 170));
         seccion.setBorder(BorderFactory.createEmptyBorder(16, 16, 8, 0));
 
         String[][] items = {
-            {"Dashboard",       "DASHBOARD",    "Admin → Dashboard"},
-            {"Usuarios",        "USUARIOS",     "Admin → Gestión de usuarios"},
-            {"Inventario",      "INVENTARIO",   "Admin → Inventario de juegos"},
-            {"Turnos",          "TURNOS",       "Admin → Gestión de turnos"},
-            {"Visualizaciones ★","VISUAL",      "Admin → Visualizaciones de datos"},
-            {"Informes",        "INFORMES",     "Admin → Informe de ventas"},
+            {"Mi perfil",   "PERFIL",  "Cliente → Mi perfil"},
+            {"Juegos",      "JUEGOS",  "Cliente → Catálogo de juegos"},
+            {"Menú",        "MENU",    "Cliente → Menú de cafetería"},
         };
 
         JPanel navPanel = new JPanel();
@@ -123,11 +114,9 @@ public class VentanaAdministrador extends JFrame {
         navPanel.add(seccion);
 
         for (String[] item : items) {
-            JButton btn = crearBotonNav(item[0], item[1], item[2]);
-            navPanel.add(btn);
+            navPanel.add(crearBotonNav(item[0], item[1], item[2]));
         }
 
- 
         JButton btnCerrar = new JButton("Cerrar sesión");
         btnCerrar.setFont(new Font("SansSerif", Font.PLAIN, 13));
         btnCerrar.setForeground(new Color(180, 60, 60));
@@ -138,10 +127,11 @@ public class VentanaAdministrador extends JFrame {
         btnCerrar.setBorder(BorderFactory.createEmptyBorder(8, 16, 16, 0));
         btnCerrar.addActionListener(e -> {
             sistema.cerrarSesion();
+            sistema.guardarDatos();
             dispose();
         });
 
-        sidebar.add(navPanel, BorderLayout.CENTER);
+        sidebar.add(navPanel,  BorderLayout.CENTER);
         sidebar.add(btnCerrar, BorderLayout.SOUTH);
         return sidebar;
     }
@@ -157,18 +147,37 @@ public class VentanaAdministrador extends JFrame {
         btn.setAlignmentX(Component.LEFT_ALIGNMENT);
         btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
         btn.setBorder(BorderFactory.createEmptyBorder(6, 20, 6, 0));
-
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                btn.setForeground(new Color(80, 80, 200));
-            }
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                btn.setForeground(new Color(50, 50, 80));
-            }
+            public void mouseEntered(java.awt.event.MouseEvent e) { btn.setForeground(new Color(80, 80, 200)); }
+            public void mouseExited(java.awt.event.MouseEvent e)  { btn.setForeground(new Color(50, 50, 80));  }
         });
-
         btn.addActionListener(e -> mostrarPanel(panelKey, ruta));
         return btn;
+    }
+
+    public void mostrarPanel(String nombre) {
+        switch (nombre) {
+            case "PERFIL": mostrarPanel("PERFIL", "Cliente → Mi perfil");           break;
+            case "JUEGOS": mostrarPanel("JUEGOS", "Cliente → Catálogo de juegos");  break;
+            case "MENU":   mostrarPanel("MENU",   "Cliente → Menú de cafetería");   break;
+            default:       mostrarPanel(nombre, "Cliente → " + nombre);
+        }
+    }
+
+    public void mostrarPanel(String nombre, String ruta) {
+        cardLayout.show(panelContenido, nombre);
+        labelRuta.setText(ruta);
+        if ("PERFIL".equals(nombre)) panelPerfil.refrescar();
+        if ("JUEGOS".equals(nombre)) panelJuegos.refrescar();
+        if ("MENU".equals(nombre))   panelMenu.refrescar();
+    }
+
+ 
+    private Cliente resolverClienteActual() {
+        for (Cliente c : sistema.getClientes().values()) {
+            return c;
+        }
+        return null;
     }
 
     private JLabel circulo(Color color) {
@@ -182,33 +191,6 @@ public class VentanaAdministrador extends JFrame {
         return c;
     }
 
-    public void mostrarPanel(String nombre) {
-        String[] rutas = {
-            "DASHBOARD:Admin → Dashboard",
-            "USUARIOS:Admin → Gestión de usuarios",
-            "INVENTARIO:Admin → Inventario de juegos",
-            "TURNOS:Admin → Gestión de turnos",
-            "VISUAL:Admin → Visualizaciones de datos",
-            "INFORMES:Admin → Informe de ventas"
-        };
-        for (String r : rutas) {
-            String[] p = r.split(":");
-            if (p[0].equals(nombre)) { mostrarPanel(nombre, p[1]); return; }
-        }
-        mostrarPanel(nombre, "Admin → " + nombre);
-    }
-
-    public void mostrarPanel(String nombre, String ruta) {
-        cardLayout.show(panelContenido, nombre);
-        labelRuta.setText(ruta);
-        if ("DASHBOARD".equals(nombre))   panelDashboard.refrescar();
-        if ("TURNOS".equals(nombre))      panelTurnos.refrescar();
-        if ("INVENTARIO".equals(nombre))  panelInventario.refrescar();
-        if ("USUARIOS".equals(nombre))    panelUsuarios.refrescar();
-        if ("INFORMES".equals(nombre))    panelInformes.refrescar();
-    }
-
-    public SistemaBoardGameCafe getSistema() {
-        return sistema;
-    }
+    public SistemaBoardGameCafe getSistema()   { return sistema; }
+    public Cliente getClienteActual()          { return clienteActual; }
 }

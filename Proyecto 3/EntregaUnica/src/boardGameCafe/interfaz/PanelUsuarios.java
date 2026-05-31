@@ -314,6 +314,8 @@ public class PanelUsuarios extends JPanel {
             BorderFactory.createEmptyBorder(6, 16, 6, 16)));
         b.setFocusPainted(false);
         b.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        b.setOpaque(true);
+        b.setContentAreaFilled(true);
         return b;
     }
 
