@@ -73,7 +73,15 @@ public class PanelInicio extends JPanel {
         btnCliente.addActionListener(e  -> ventana.mostrarLoginCliente());
         btnEmpleado.addActionListener(e -> ventana.mostrarLoginEmpleado());
         btnAdmin.addActionListener(e    -> ventana.mostrarLoginAdministrador());
-        btnSalir.addActionListener(e    -> System.exit(0));
+        btnSalir.addActionListener(e    -> {
+            try {
+                ventana.getSistema().guardarDatos();
+            } catch (Exception ex) {
+ 			   JOptionPane.showMessageDialog(ventana, "Error al guardar datos: " + ex.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE);
+            }
+            System.exit(0);
+        });
 
         botones.add(btnCliente);
         botones.add(Box.createVerticalStrut(10));

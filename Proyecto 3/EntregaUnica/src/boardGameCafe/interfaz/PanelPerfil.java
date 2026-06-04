@@ -144,7 +144,7 @@ public class PanelPerfil extends JPanel {
         }
         lblNombre.setText(cliente.getNombre());
         lblDocumento.setText(cliente.getDocumentoIdentidad());
-        lblPuntos.setText(String.format("%.0f pts", cliente.getPuntosFidelidad()));
+        lblPuntos.setText(String.format("%d pts", cliente.getPuntosFidelidad()));
 
         modeloFavoritos.clear();
         if (cliente.getJuegosFavoritos() != null) {
